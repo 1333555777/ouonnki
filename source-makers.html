@@ -1,0 +1,332 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>公开版权源生成器 · OuonnkiTV</title>
+<style>
+  :root{
+    --bg:#0e0e12; --panel:#17171f; --panel2:#1f1f2b; --line:#2c2c3a;
+    --txt:#e9e9f0; --sub:#a9a9bd; --accent:#ff6a3d; --accent2:#7c5cff;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:radial-gradient(1200px 600px at 70% -10%, #221a2e 0%, var(--bg) 55%);color:var(--txt);
+    font-family:"PingFang SC","Microsoft YaHei",system-ui,-apple-system,Segoe UI,Roboto,sans-serif;line-height:1.6}
+  header{padding:28px 20px 8px;max-width:920px;margin:0 auto}
+  h1{font-size:1.5rem;margin:0 0 4px}
+  header p{color:var(--sub);margin:0;font-size:.9rem}
+  main{max-width:920px;margin:0 auto;padding:14px 20px 60px}
+  .proxybox{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;margin:18px 0}
+  .proxybox label{font-weight:600;display:block;margin-bottom:6px}
+  .proxybox input{width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--line);
+    background:var(--panel2);color:var(--txt);font-size:.9rem}
+  .hint{color:var(--sub);font-size:.78rem;margin-top:8px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px;margin:16px 0}
+  .card h2{margin:0 0 6px;font-size:1.12rem}
+  .card .desc{color:var(--sub);font-size:.86rem;margin:0 0 12px}
+  .row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:10px}
+  .row label{font-size:.85rem;color:var(--sub)}
+  .row input[type=number]{width:90px;padding:8px 10px;border-radius:9px;border:1px solid var(--line);background:var(--panel2);color:var(--txt)}
+  .row input[type=text]{flex:1;min-width:200px;padding:8px 10px;border-radius:9px;border:1px solid var(--line);background:var(--panel2);color:var(--txt)}
+  button.go{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border:0;border-radius:10px;
+    padding:10px 16px;font-weight:600;cursor:pointer;font-size:.9rem}
+  button.go:disabled{opacity:.5;cursor:default}
+  button.ghost{background:transparent;color:var(--txt);border:1px solid var(--line);border-radius:10px;padding:8px 12px;cursor:pointer;font-size:.82rem}
+  pre{background:#0b0b10;border:1px solid var(--line);border-radius:10px;padding:12px;max-height:220px;overflow:auto;
+    font-size:.72rem;color:#bfe3c0;white-space:pre-wrap;word-break:break-all;margin:10px 0 0}
+  .status{font-size:.82rem;margin-top:8px}
+  .ok{color:#6ee787}.bad{color:#ff7b72}.warn{color:#ffd866}
+  code{background:var(--panel2);padding:1px 6px;border-radius:6px;color:#ffd9c9}
+  a{color:var(--accent)}
+</style>
+</head>
+<body>
+<header>
+  <h1>公开版权源生成器</h1>
+  <p>把 NASA / Wikimedia / Pexels / Pixabay 的公开授权视频，一键生成 OuonnkiTV 可用的苹果 CMS 格式 JSON 片源。</p>
+</header>
+<main>
+
+  <div class="proxybox">
+    <label>代理前缀（可选，但 NASA / Wikimedia 必须填）</label>
+    <input id="proxy" placeholder="https://你的域名/api/proxy?url=" />
+    <div class="hint">
+      NASA 资源主机与 Wikimedia API <b>没有开放浏览器跨域（CORS）</b>，在网页里直连会被拦，需走你的跨域代理（结尾带 <code>?url=</code>）。
+      已在站点设置里配过代理的，把同一个前缀粘到这里即可。<br />
+      Pixabay 已开放 CORS，可留空直连；Pexels 因 CORS + 鉴权限制，浏览器内无法生成，请改用 <code>build_pexels_source.py</code> 脚本。
+    </div>
+  </div>
+
+  <!-- NASA -->
+  <section class="card">
+    <h2>🚀 NASA 影像（美国联邦政府作品 · 公有领域）</h2>
+    <p class="desc">无需 key，直链 mp4。搜索多个航天/自然主题，解析出 mp4 + 海报。</p>
+    <div class="row">
+      <label>条数上限</label>
+      <input id="nasa-limit" type="number" value="50" min="5" max="200" />
+      <button class="go" id="nasa-go">生成 nasa-source.json</button>
+      <button class="ghost" id="nasa-copy">复制 JSON</button>
+      <button class="ghost" id="nasa-dl">下载</button>
+    </div>
+    <div class="status" id="nasa-status"></div>
+    <pre id="nasa-out" hidden></pre>
+  </section>
+
+  <!-- Wikimedia -->
+  <section class="card">
+    <h2>📚 Wikimedia Commons 视频（CC / 公有领域）</h2>
+    <p class="desc">无需 key，直链 webm/ogv（Chromium 可播，Safari 对 webm 支持有限）。<b>必须填代理前缀</b>。</p>
+    <div class="row">
+      <label>条数上限</label>
+      <input id="wm-limit" type="number" value="40" min="5" max="200" />
+      <button class="go" id="wm-go">生成 wikimedia-source.json</button>
+      <button class="ghost" id="wm-copy">复制 JSON</button>
+      <button class="ghost" id="wm-dl">下载</button>
+    </div>
+    <div class="status" id="wm-status"></div>
+    <pre id="wm-out" hidden></pre>
+  </section>
+
+  <!-- Pexels -->
+  <section class="card">
+    <h2>🎬 Pexels 免费素材（免费可商用）</h2>
+    <p class="desc">需免费 key（<a href="https://www.pexels.com/api/" target="_blank">申请</a>）。因 CORS + 鉴权，浏览器内生成受限，<b>推荐用脚本</b> <code>build_pexels_source.py --key 你的KEY</code>；下方按钮会尝试（需能转发 Authorization 头的代理），失败请改用脚本。</p>
+    <div class="row">
+      <label>API Key</label>
+      <input id="pexels-key" type="text" placeholder="Pexels API key" />
+      <label>条数上限</label>
+      <input id="pexels-limit" type="number" value="40" min="5" max="200" />
+      <button class="go" id="pexels-go">尝试生成 pexels-source.json</button>
+    </div>
+    <div class="status" id="pexels-status"></div>
+    <pre id="pexels-out" hidden></pre>
+  </section>
+
+  <!-- Pixabay -->
+  <section class="card">
+    <h2>🌅 Pixabay 免费素材（免费可商用）</h2>
+    <p class="desc">需免费 key（<a href="https://pixabay.com/api/docs/" target="_blank">申请</a>）。已开放 CORS，可直连（代理留空即可）。</p>
+    <div class="row">
+      <label>API Key</label>
+      <input id="pixabay-key" type="text" placeholder="Pixabay API key" />
+      <label>条数上限</label>
+      <input id="pixabay-limit" type="number" value="40" min="5" max="200" />
+      <button class="go" id="pixabay-go">生成 pixabay-source.json</button>
+      <button class="ghost" id="pixabay-copy">复制 JSON</button>
+      <button class="ghost" id="pixabay-dl">下载</button>
+    </div>
+    <div class="status" id="pixabay-status"></div>
+    <pre id="pixabay-out" hidden></pre>
+  </section>
+
+  <section class="card">
+    <h2>📦 生成后怎么用</h2>
+    <p class="desc">
+      1. 点「下载」把 json 存到本地；<br />
+      2. 上传/覆盖到你的站点根目录（与 <code>index.html</code> 同级），文件名保持 <code>nasa-source.json</code> 等；<br />
+      3. 在站点「片源设置」里点对应的一键预设（NASA 影像 / Wikimedia 视频 / Pexels 素材 / Pixabay 素材），保存即可。<br />
+      4. <b>Pixabay 默认源是空的</b>，必须先生成并覆盖 <code>pixabay-source.json</code> 才有内容。
+    </p>
+  </section>
+
+</main>
+
+<script>
+  function fetchURL(u){
+    var p = document.getElementById("proxy").value.trim();
+    return p ? (p + encodeURIComponent(u)) : u;
+  }
+  function sleep(ms){ return new Promise(function(r){ setTimeout(r, ms); }); }
+  function wrap(items, msg){
+    return { code:1, msg:msg, page:1, pagecount:1, limit:items.length, total:items.length, list:items };
+  }
+  function show(outId, preId, statusId, obj, msg, cls){
+    var pre = document.getElementById(preId);
+    pre.hidden = false;
+    pre.textContent = JSON.stringify(obj, null, 1);
+    var st = document.getElementById(statusId);
+    st.className = "status " + (cls||"ok");
+    st.textContent = msg;
+    return obj;
+  }
+  function download(filename, obj){
+    var blob = new Blob([JSON.stringify(obj, null, 1)], {type:"application/json"});
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = filename;
+    a.click();
+    setTimeout(function(){ URL.revokeObjectURL(a.href); }, 1000);
+  }
+  function copy(preId, statusId, label){
+    var txt = document.getElementById(preId).textContent;
+    if(!txt){ return; }
+    navigator.clipboard.writeText(txt).then(function(){
+      var st = document.getElementById(statusId);
+      st.className = "status ok";
+      st.textContent = (st.textContent||"") + " 〔已复制 " + label + "〕";
+    }).catch(function(){ alert("复制失败，请手动选择文本复制"); });
+  }
+
+  /* ---------- NASA ---------- */
+  var NASA_TOPICS = ["moon","mars","earth","rocket launch","space station","sun","galaxy","saturn","black hole","nebula","solar system","astronaut","jupiter","comet","aurora","iss","telescope","eclipse"];
+  async function genNASA(limit){
+    var items = [], seen = {};
+    for(var i=0;i<NASA_TOPICS.length && items.length<limit;i++){
+      var q = NASA_TOPICS[i];
+      var u = fetchURL("https://images-api.nasa.gov/search?q=" + encodeURIComponent(q) + "&media_type=video");
+      var d = await fetch(u).then(function(r){ return r.json(); });
+      var arr = (d.collection && d.collection.items) || [];
+      for(var j=0;j<arr.length && items.length<limit;j++){
+        var it = arr[j];
+        var da = (it.data && it.data[0]) || {};
+        var id = da.nasa_id;
+        if(!id || seen[id]) continue;
+        var ch = (it.href||"").replace(/ /g, "%20");
+        var m;
+        try { m = await fetch(fetchURL(ch)).then(function(r){ return r.json(); }); }
+        catch(e){ continue; }
+        var urls = Array.isArray(m) ? m : ((m.collection && m.collection.items) || []);
+        var mp4=null, large=null, poster=null;
+        for(var k=0;k<urls.length;k++){
+          var x = urls[k]; if(typeof x !== "string") continue;
+          var xl = x.toLowerCase();
+          if(xl.endsWith(".mp4")){ if(large==null && x.indexOf("~large")>=0) large=x; if(mp4==null && x.indexOf("~orig")<0) mp4=x; }
+          else if((xl.endsWith(".jpg")||xl.endsWith(".jpeg")||xl.endsWith(".png")) && poster==null) poster=x;
+        }
+        if(!mp4 && large) mp4=large;
+        if(!mp4) continue;
+        mp4 = mp4.replace("http://","https://").replace(/ /g,"%20");
+        if(poster) poster = poster.replace("http://","https://").replace(/ /g,"%20");
+        items.push({
+          vod_id:id, vod_name:da.title||id, type_name:"NASA 影像", vod_year:(da.date_created||"").slice(0,4),
+          vod_remarks:"美国联邦政府作品 · 公有领域", vod_pic:poster||"", vod_play_from:"NASA官方",
+          vod_play_url:"正片$"+mp4, vod_content:((da.description||"").replace(/\s+/g," ").trim()).slice(0,500)
+        });
+        seen[id]=1;
+      }
+    }
+    return items;
+  }
+
+  /* ---------- Wikimedia ---------- */
+  var WM_TOPICS = ["space","earth","nature","wildlife","city","ocean","mountain","time lapse","clouds","river","forest","desert","volcano","aurora","galaxy","wild animals","sunset","storm"];
+  async function genWM(limit){
+    var items = [], seen = {};
+    for(var i=0;i<WM_TOPICS.length && items.length<limit;i++){
+      var t = WM_TOPICS[i];
+      var q = "filetype:video " + t;
+      var u = fetchURL("https://commons.wikimedia.org/w/api.php?action=query&format=json&list=search&srsearch=" + encodeURIComponent(q) + "&srnamespace=6&srlimit=8");
+      var d = await fetch(u).then(function(r){ return r.json(); });
+      var arr = (d.query && d.query.search) || [];
+      for(var j=0;j<arr.length && items.length<limit;j++){
+        var title = arr[j].title; if(!title || seen[title]) continue; seen[title]=1;
+        var iu = fetchURL("https://commons.wikimedia.org/w/api.php?action=query&format=json&titles=" + encodeURIComponent(title) + "&prop=imageinfo&iiprop=url%7Cmime%7Csize%7Cthumburl&iiurlwidth=480");
+        var info;
+        try { info = await fetch(iu).then(function(r){ return r.json(); }); }
+        catch(e){ continue; }
+        var pages = info.query ? Object.values(info.query.pages) : [];
+        if(!pages.length) continue;
+        var ii = (pages[0].imageinfo && pages[0].imageinfo[0]) || {};
+        if(!((ii.mime||"").toLowerCase().startsWith("video"))) continue;
+        var name = title.replace("File:","").replace(/\.[^.]+$/,"");
+        items.push({
+          vod_id:title, vod_name:name, type_name:"Wikimedia 视频", vod_year:"",
+          vod_remarks:"CC / 公有领域（Wikimedia Commons）", vod_pic:ii.thumburl||"", vod_play_from:"Commons",
+          vod_play_url:"正片$"+ii.url, vod_content:"来自 Wikimedia Commons 的公开授权视频（webm/ogv 格式）。"
+        });
+        await sleep(350);
+      }
+      await sleep(400);
+    }
+    return items;
+  }
+
+  /* ---------- Pixabay ---------- */
+  async function genPixabay(key, limit){
+    var items = [], seen = {};
+    var TOPICS = ["nature","sky","ocean","forest","city","animal","flower","mountain","cloud","water"];
+    for(var i=0;i<TOPICS.length && items.length<limit;i++){
+      var t = TOPICS[i];
+      var u = fetchURL("https://pixabay.com/api/videos/?key=" + encodeURIComponent(key) + "&q=" + encodeURIComponent(t) + "&per_page=20&safesearch=true");
+      var d = await fetch(u).then(function(r){ return r.json(); });
+      if(d.error) throw new Error(d.error);
+      var arr = d.hits || [];
+      for(var j=0;j<arr.length && items.length<limit;j++){
+        var h = arr[j]; if(seen[h.id]) continue; seen[h.id]=1;
+        var vids = h.videos||{}; var best = vids.large||vids.medium||vids.small||{}; var uu = best.url;
+        if(!uu) continue;
+        var tags = (h.tags||"").replace(/,/g," ").trim();
+        items.push({
+          vod_id:"pixabay-"+h.id, vod_name:(tags.split(" ")[0]||("Pixabay 视频 "+h.id)), type_name:"Pixabay 素材",
+          vod_year:"", vod_remarks:"Pixabay 许可（免费可商用）", vod_pic:h.previewURL||"", vod_play_from:"Pixabay",
+          vod_play_url:"正片$"+uu, vod_content:"Pixabay 免费视频，标签："+tags+"；作者："+(h.user||"未知")+"。"
+        });
+      }
+    }
+    return items;
+  }
+
+  /* ---------- Pexels（浏览器内基本不可行，按钮会尝试并回退提示） ---------- */
+  async function genPexels(key, limit){
+    var items = [], seen = {};
+    var TOPICS = ["nature","city","ocean","sky","forest","mountain","animal","cloud","flower","space"];
+    for(var i=0;i<TOPICS.length && items.length<limit;i++){
+      var t = TOPICS[i];
+      var u = fetchURL("https://api.pexels.com/videos/search?query=" + encodeURIComponent(t) + "&per_page=10&size=large");
+      var d = await fetch(u, {headers:{"Authorization":key}}).then(function(r){ return r.json(); });
+      if(d.error) throw new Error(d.error.message||"API 错误");
+      var arr = d.videos || [];
+      for(var j=0;j<arr.length && items.length<limit;j++){
+        var v = arr[j]; if(seen[v.id]) continue; seen[v.id]=1;
+        var files = v.video_files||[]; var mp4=null;
+        for(var k=0;k<files.length;k++){
+          if(files[k].file_type==="video/mp4" || (files[k].quality&&files[k].quality!=="raw")){ mp4=files[k].link; if(mp4)break; }
+        }
+        if(!mp4 && files.length) mp4 = files[0].link;
+        if(!mp4) continue;
+        items.push({
+          vod_id:"pexels-"+v.id, vod_name:((v.user&&v.user.name)||"")+" · "+(v.url? v.url.split("/").filter(Boolean).pop() : v.id),
+          type_name:"Pexels 素材", vod_year:"", vod_remarks:"Pexels 许可（免费可商用）", vod_pic:v.image||"",
+          vod_play_from:"Pexels", vod_play_url:"正片$"+mp4, vod_content:"Pexels 免费视频，作者："+((v.user&&v.user.name)||"未知")+"。"
+        });
+      }
+    }
+    return items;
+  }
+
+  function bind(id, fn, file, msg){
+    document.getElementById(id).addEventListener("click", async function(){
+      var btn = this; btn.disabled = true;
+      try{
+        var items = await fn();
+        if(!items.length) throw new Error("未取到任何条目（可能代理/CORS 问题，或 key 无效）");
+        var obj = wrap(items, msg);
+        show(id.replace("-go","-out").replace("-copy","").replace("-dl",""), id.replace("-go","-out"), id.replace("-go","-status"), obj, "生成成功：" + items.length + " 条。点下载保存，再上传覆盖站点同名文件。", "ok");
+        window._last = window._last || {}; window._last[file] = obj;
+      }catch(e){
+        var sid = id.replace("-go","-status");
+        var st = document.getElementById(sid); st.className="status bad";
+        st.textContent = "生成失败：" + e.message + "（NASA/Wikimedia 需要代理前缀；Pexels 建议改用 build_pexels_source.py 脚本）";
+      }finally{ btn.disabled = false; }
+    });
+  }
+
+  bind("nasa-go", async function(){ var l=+document.getElementById("nasa-limit").value||50; return genNASA(l); }, "nasa-source.json", "NASA 公有领域影音库（自动生成，无 key / 直链 mp4）");
+  bind("wm-go", async function(){ var l=+document.getElementById("wm-limit").value||40; return genWM(l); }, "wikimedia-source.json", "Wikimedia Commons 公有领域/CC 视频（自动生成，无 key / webm 直链）");
+  bind("pixabay-go", async function(){ var k=document.getElementById("pixabay-key").value.trim(); if(!k) throw new Error("请先填 Pixabay key"); var l=+document.getElementById("pixabay-limit").value||40; return genPixabay(k,l); }, "pixabay-source.json", "Pixabay 免费视频（需 key 生成）");
+  bind("pexels-go", async function(){ var k=document.getElementById("pexels-key").value.trim(); if(!k) throw new Error("请先填 Pexels key"); var l=+document.getElementById("pexels-limit").value||40; return genPexels(k,l); }, "pexels-source.json", "Pexels 免费视频（需 key）");
+
+  function bindDlCopy(goId, file){
+    document.getElementById(goId.replace("-go","-copy")).addEventListener("click", function(){ copy(goId.replace("-go","-out"), goId.replace("-go","-status"), file); });
+    document.getElementById(goId.replace("-go","-dl")).addEventListener("click", function(){
+      var obj = (window._last && window._last[file]);
+      if(!obj){ alert("请先生成再下载"); return; }
+      download(file, obj);
+    });
+  }
+  bindDlCopy("nasa-go","nasa-source.json");
+  bindDlCopy("wm-go","wikimedia-source.json");
+  bindDlCopy("pixabay-go","pixabay-source.json");
+</script>
+</body>
+</html>
