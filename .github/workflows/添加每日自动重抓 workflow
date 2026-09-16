@@ -1,0 +1,84 @@
+name: 每日自动重生成片源
+
+on:
+  schedule:
+    # GitHub Actions 的 cron 使用 UTC。北京时间 00:00 = UTC 前一天 16:00。
+    # 高峰期定时任务可能延迟几分钟到半小时，属正常现象。
+    - cron: '0 16 * * *'
+  workflow_dispatch: {}   # 允许在 Actions 页面点 "Run workflow" 手动触发
+
+permissions:
+  contents: write        # 允许本 workflow 把生成的 json 提交回仓库
+
+concurrency:
+  group: refresh-sources
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: 检出仓库
+        uses: actions/checkout@v4
+
+      - name: 配置 Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: 生成 NASA 影像（无需 key）
+        run: |
+          python build_nasa_source.py --limit 60
+          if [ "$(python -c "import json;print(len(json.load(open('nasa-source.json'))['list']))" 2>/dev/null)" = "0" ]; then
+            git checkout -- nasa-source.json
+            echo "NASA 生成 0 条，已还原为上一版"
+          fi
+
+      - name: 生成 Wikimedia 视频（无需 key）
+        run: |
+          python build_wikimedia_source.py --limit 50
+          if [ "$(python -c "import json;print(len(json.load(open('wikimedia-source.json'))['list']))" 2>/dev/null)" = "0" ]; then
+            git checkout -- wikimedia-source.json
+            echo "Wikimedia 生成 0 条，已还原为上一版"
+          fi
+
+      - name: 生成 Pexels（仅当配置了 PEXELS_API_KEY）
+        env:
+          PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
+        run: |
+          if [ -n "$PEXELS_API_KEY" ]; then
+            python build_pexels_source.py --key "$PEXELS_API_KEY" --limit 40
+            if [ "$(python -c "import json;print(len(json.load(open('pexels-source.json'))['list']))" 2>/dev/null)" = "0" ]; then
+              git checkout -- pexels-source.json
+              echo "Pexels 生成 0 条，已还原为上一版"
+            fi
+          else
+            echo "未配置 PEXELS_API_KEY，保留仓库现有的 pexels-source.json（不覆盖）"
+          fi
+
+      - name: 生成 Pixabay（仅当配置了 PIXABAY_API_KEY）
+        env:
+          PIXABAY_API_KEY: ${{ secrets.PIXABAY_API_KEY }}
+        run: |
+          if [ -n "$PIXABAY_API_KEY" ]; then
+            python build_pixabay_source.py --key "$PIXABAY_API_KEY" --limit 40
+            if [ "$(python -c "import json;print(len(json.load(open('pixabay-source.json'))['list']))" 2>/dev/null)" = "0" ]; then
+              git checkout -- pixabay-source.json
+              echo "Pixabay 生成 0 条，已还原为上一版"
+            fi
+          else
+            echo "未配置 PIXABAY_API_KEY，保留仓库现有的 pixabay-source.json（不覆盖）"
+          fi
+
+      - name: 提交并推送（仅在有变化才提交）
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add nasa-source.json wikimedia-source.json pexels-source.json pixabay-source.json
+          if git diff --cached --quiet; then
+            echo "四个源均无变化，跳过提交"
+          else
+            git commit -m "chore: 自动重生成片源 $(TZ=Asia/Shanghai date +'%Y-%m-%d %H:%M')"
+            git push
+          fi
