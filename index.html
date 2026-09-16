@@ -1,0 +1,2404 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Ouonnki 影视 · 在线影视聚合搜索与播放</title>
+    <meta
+      name="description"
+      content="OuonnkiTV 在线影视：聚合搜索、海报墙、流畅播放。支持自建视频源，提供 TV 电视端、PC 桌面端、手机端三端客户端下载。"
+    />
+    <meta name="theme-color" content="#15130f" />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1815'/%3E%3Cpath d='M12 9.5l11 6.5-11 6.5z' fill='%23c9402f'/%3E%3C/svg%3E"
+    />
+    <style>
+      :root {
+        --paper: oklch(97.4% 0.007 88);
+        --paper-2: oklch(99.2% 0.004 88);
+        --stage: oklch(17% 0.018 60);
+        --stage-2: oklch(23% 0.02 58);
+        --ink: oklch(21% 0.018 65);
+        --ink-2: oklch(38% 0.015 70);
+        --ink-3: oklch(56% 0.012 75);
+        --hair: oklch(87% 0.012 80);
+        --hair-2: oklch(79% 0.014 80);
+        --accent: oklch(53% 0.185 30);
+        --accent-soft: oklch(94.5% 0.03 32);
+        --font-display: "PingFang SC", "HarmonyOS Sans SC", "Source Han Sans SC",
+          "Microsoft YaHei", "Noto Sans SC", system-ui, sans-serif;
+        --font-body: "PingFang SC", "HarmonyOS Sans SC", "Microsoft YaHei",
+          "Noto Sans SC", system-ui, -apple-system, sans-serif;
+        --font-mono: ui-monospace, "SFMono-Regular", "Cascadia Mono", Consolas,
+          monospace;
+        --pad: clamp(1.1rem, 4vw, 3rem);
+        --ease: cubic-bezier(0.22, 1, 0.36, 1);
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        background: var(--paper);
+        color: var(--ink);
+        font-family: var(--font-body);
+        font-size: 16px;
+        line-height: 1.65;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      svg {
+        display: block;
+      }
+
+      :focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 2px;
+        border-radius: 3px;
+      }
+
+      .wrap {
+        width: 100%;
+        max-width: 1180px;
+        margin-inline: auto;
+        padding-inline: var(--pad);
+        position: relative;
+      }
+
+      /* ---------- 导航 ---------- */
+      header.nav {
+        background: var(--stage);
+        border-bottom: 1px solid oklch(32% 0.02 60);
+      }
+
+      .nav-inner {
+        display: flex;
+        align-items: center;
+        gap: 1.25rem;
+        min-height: 60px;
+      }
+
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.55rem;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        color: var(--paper-2);
+        white-space: nowrap;
+      }
+
+      .brand-mark {
+        width: 26px;
+        height: 26px;
+        border-radius: 7px;
+        background: oklch(96% 0.004 88);
+        display: grid;
+        place-items: center;
+      }
+
+      .brand em {
+        font-style: normal;
+        color: var(--accent);
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 1.35rem;
+        margin-left: 1rem;
+        font-size: 0.875rem;
+        color: oklch(74% 0.015 80);
+      }
+
+      .nav-links a:hover {
+        color: #fff;
+      }
+
+      .nav-right {
+        margin-left: auto;
+        display: flex;
+        gap: 0.6rem;
+        align-items: center;
+      }
+
+      @media (max-width: 800px) {
+        .nav-links {
+          display: none;
+        }
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.45rem;
+        padding: 0.62rem 1rem;
+        border-radius: 4px;
+        border: 1px solid var(--ink);
+        background: var(--ink);
+        color: var(--paper-2);
+        font: inherit;
+        font-size: 0.875rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: transform 0.3s var(--ease), background 0.25s var(--ease);
+      }
+
+      .btn:hover {
+        transform: translateY(-2px);
+      }
+
+      .btn-accent {
+        background: var(--accent);
+        border-color: var(--accent);
+        color: #fff;
+      }
+
+      .btn-outline {
+        background: transparent;
+        color: oklch(88% 0.01 85);
+        border-color: oklch(40% 0.02 62);
+      }
+
+      .btn-outline:hover {
+        border-color: oklch(70% 0.02 80);
+        color: #fff;
+      }
+
+      .btn-sm {
+        padding: 0.45rem 0.8rem;
+        font-size: 0.82rem;
+      }
+
+      /* ---------- Hero（影院幕布） ---------- */
+      .hero {
+        background:
+          radial-gradient(
+            120% 90% at 50% 0%,
+            oklch(28% 0.03 55) 0%,
+            var(--stage) 60%
+          ),
+          var(--stage);
+        color: oklch(92% 0.01 85);
+        padding-block: clamp(2.5rem, 6vw, 4.5rem) clamp(2rem, 4vw, 3rem);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .hero::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background-image: repeating-linear-gradient(
+          0deg,
+          oklch(0% 0 0 / 0.16) 0 1px,
+          transparent 1px 3px
+        );
+        opacity: 0.5;
+      }
+
+      .hero .wrap {
+        z-index: 1;
+        text-align: center;
+      }
+
+      .hero h1 {
+        font-family: var(--font-display);
+        font-size: clamp(1.9rem, 5vw, 3.15rem);
+        line-height: 1.1;
+        letter-spacing: -0.035em;
+        font-weight: 800;
+        margin: 0 0 0.85rem;
+        color: #fff;
+        text-wrap: balance;
+      }
+
+      .hero h1 .slash {
+        color: var(--accent);
+        font-weight: 300;
+      }
+
+      .hero p {
+        margin: 0 auto 1.6rem;
+        color: oklch(78% 0.015 82);
+        max-width: 36em;
+        font-size: clamp(0.92rem, 1.5vw, 1.02rem);
+      }
+
+      .searchbar {
+        display: flex;
+        gap: 0.5rem;
+        max-width: 620px;
+        margin-inline: auto;
+        background: oklch(24% 0.02 58);
+        border: 1px solid oklch(38% 0.02 60);
+        border-radius: 6px;
+        padding: 0.4rem;
+        transition: border-color 0.3s var(--ease);
+      }
+
+      .searchbar:focus-within {
+        border-color: var(--accent);
+      }
+
+      .searchbar input {
+        flex: 1;
+        min-width: 0;
+        background: transparent;
+        border: 0;
+        outline: none;
+        color: #fff;
+        font: inherit;
+        font-size: 1rem;
+        padding: 0.5rem 0.6rem;
+      }
+
+      .searchbar input::placeholder {
+        color: oklch(58% 0.015 75);
+      }
+
+      .hot {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-top: 1rem;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.8rem;
+        color: oklch(62% 0.015 78);
+      }
+
+      .hot button {
+        background: oklch(26% 0.02 58);
+        border: 1px solid oklch(38% 0.02 60);
+        color: oklch(84% 0.015 85);
+        border-radius: 100px;
+        padding: 0.25rem 0.7rem;
+        font: inherit;
+        font-size: 0.8rem;
+        cursor: pointer;
+        transition: border-color 0.25s var(--ease), color 0.25s var(--ease);
+      }
+
+      .hot button:hover {
+        border-color: var(--accent);
+        color: #fff;
+      }
+
+      /* ---------- 区块 ---------- */
+      section.sec {
+        padding-block: clamp(2.25rem, 5vw, 3.5rem);
+      }
+
+      .sec-head {
+        display: flex;
+        align-items: baseline;
+        gap: 1rem 1.5rem;
+        flex-wrap: wrap;
+        margin-bottom: 1.5rem;
+      }
+
+      h2 {
+        font-family: var(--font-display);
+        font-size: clamp(1.35rem, 2.8vw, 1.85rem);
+        letter-spacing: -0.03em;
+        font-weight: 800;
+        margin: 0;
+      }
+
+      .sec-note {
+        font-size: 0.82rem;
+        color: var(--ink-3);
+        margin-left: auto;
+      }
+
+      .demo-tag {
+        display: inline-block;
+        font-family: var(--font-mono);
+        font-size: 0.68rem;
+        letter-spacing: 0.1em;
+        color: var(--ink-3);
+        border: 1px solid var(--hair);
+        border-radius: 3px;
+        padding: 0.1rem 0.4rem;
+      }
+
+      /* ---------- 轮播 ---------- */
+      .banner {
+        position: relative;
+        border-radius: 8px;
+        overflow: hidden;
+        border: 1px solid var(--hair);
+        background: var(--stage);
+        color: #fff;
+        min-height: clamp(260px, 34vw, 380px);
+        display: flex;
+        align-items: flex-end;
+      }
+
+      .slide {
+        position: absolute;
+        inset: 0;
+        opacity: 0;
+        transition: opacity 0.7s var(--ease);
+        display: flex;
+        align-items: flex-end;
+        padding: clamp(1.25rem, 4vw, 2.75rem);
+        background-size: cover;
+        background-position: center;
+      }
+
+      .slide::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          0deg,
+          oklch(15% 0.02 60 / 0.92) 0%,
+          oklch(15% 0.02 60 / 0.55) 45%,
+          oklch(15% 0.02 60 / 0.15) 100%
+        );
+      }
+
+      .slide.on {
+        opacity: 1;
+      }
+
+      .slide-inner {
+        position: relative;
+        max-width: 40em;
+      }
+
+      .slide-kicker {
+        font-family: var(--font-mono);
+        font-size: 0.7rem;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--accent);
+        margin-bottom: 0.5rem;
+      }
+
+      .slide h3 {
+        font-family: var(--font-display);
+        font-size: clamp(1.4rem, 3.4vw, 2.2rem);
+        letter-spacing: -0.03em;
+        font-weight: 800;
+        margin: 0 0 0.5rem;
+        color: #fff;
+      }
+
+      .slide p {
+        margin: 0 0 1.1rem;
+        color: oklch(84% 0.015 85);
+        font-size: 0.9rem;
+        line-height: 1.7;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+
+      .slide-meta {
+        display: flex;
+        gap: 0.75rem;
+        font-family: var(--font-mono);
+        font-size: 0.75rem;
+        color: oklch(74% 0.015 82);
+        margin-bottom: 1rem;
+        flex-wrap: wrap;
+      }
+
+      .dots {
+        position: absolute;
+        right: clamp(1rem, 3vw, 1.75rem);
+        top: clamp(1rem, 3vw, 1.75rem);
+        display: flex;
+        gap: 0.4rem;
+        z-index: 2;
+      }
+
+      .dots button {
+        width: 22px;
+        height: 3px;
+        border: 0;
+        padding: 0;
+        border-radius: 2px;
+        background: oklch(100% 0 0 / 0.35);
+        cursor: pointer;
+        transition: background 0.3s var(--ease);
+      }
+
+      .dots button.on {
+        background: var(--accent);
+      }
+
+      /* ---------- 分类 ---------- */
+      .cats {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        margin-bottom: 1.5rem;
+      }
+
+      .cat {
+        border: 1px solid var(--hair);
+        background: var(--paper-2);
+        color: var(--ink-2);
+        border-radius: 100px;
+        padding: 0.35rem 0.9rem;
+        font: inherit;
+        font-size: 0.85rem;
+        cursor: pointer;
+        transition: all 0.25s var(--ease);
+      }
+
+      .cat:hover {
+        border-color: var(--ink-3);
+        color: var(--ink);
+      }
+
+      .cat.on {
+        background: var(--ink);
+        border-color: var(--ink);
+        color: var(--paper-2);
+      }
+
+      /* ---------- 海报墙 ---------- */
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(min(48%, 10.5rem), 1fr));
+        gap: clamp(0.75rem, 2vw, 1.25rem);
+      }
+
+      .card {
+        cursor: pointer;
+        background: none;
+        border: 0;
+        padding: 0;
+        font: inherit;
+        text-align: left;
+        color: inherit;
+      }
+
+      .poster {
+        position: relative;
+        aspect-ratio: 2 / 3;
+        border-radius: 6px;
+        overflow: hidden;
+        border: 1px solid var(--hair);
+        display: flex;
+        align-items: flex-end;
+        padding: 0.75rem;
+        background-size: cover;
+        background-position: center;
+        transition: transform 0.45s var(--ease), box-shadow 0.45s var(--ease);
+      }
+
+      .card:hover .poster {
+        transform: translateY(-5px);
+        box-shadow: 0 22px 40px -24px oklch(20% 0.02 65 / 0.65);
+      }
+
+      .poster .glyph {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -58%);
+        font-family: var(--font-display);
+        font-weight: 800;
+        font-size: 4.2rem;
+        color: oklch(100% 0 0 / 0.28);
+        text-shadow: 0 2px 18px oklch(10% 0.02 60 / 0.5);
+        letter-spacing: -0.05em;
+        pointer-events: none;
+      }
+
+      .poster .shade {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          0deg,
+          oklch(15% 0.02 60 / 0.85) 0%,
+          oklch(15% 0.02 60 / 0.25) 45%,
+          oklch(15% 0.02 60 / 0.1) 100%
+        );
+        pointer-events: none;
+      }
+
+      .poster .grain {
+        position: absolute;
+        inset: 0;
+        background-image: repeating-linear-gradient(
+          135deg,
+          oklch(100% 0 0 / 0.05) 0 1px,
+          transparent 1px 5px
+        );
+        pointer-events: none;
+      }
+
+      .poster .ptitle {
+        position: relative;
+        color: #fff;
+        font-family: var(--font-display);
+        font-weight: 700;
+        font-size: 0.95rem;
+        line-height: 1.3;
+        letter-spacing: -0.01em;
+        text-shadow: 0 1px 8px oklch(15% 0.02 60 / 0.6);
+      }
+
+      .poster .ptag {
+        position: absolute;
+        top: 0.6rem;
+        left: 0.6rem;
+        font-family: var(--font-mono);
+        font-size: 0.64rem;
+        letter-spacing: 0.08em;
+        background: oklch(15% 0.02 60 / 0.55);
+        color: #fff;
+        border-radius: 3px;
+        padding: 0.1rem 0.35rem;
+      }
+
+      .poster .play {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        opacity: 0;
+        background: oklch(15% 0.02 60 / 0.35);
+        transition: opacity 0.35s var(--ease);
+      }
+
+      .card:hover .play {
+        opacity: 1;
+      }
+
+      .play i {
+        width: 46px;
+        height: 46px;
+        border-radius: 50%;
+        background: var(--accent);
+        display: grid;
+        place-items: center;
+      }
+
+      .card .meta {
+        margin-top: 0.5rem;
+        font-size: 0.8rem;
+        color: var(--ink-2);
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+      }
+
+      .card .meta b {
+        font-weight: 600;
+        color: var(--ink);
+      }
+
+      .card .meta span {
+        color: var(--ink-3);
+        font-family: var(--font-mono);
+        font-size: 0.72rem;
+      }
+
+      .empty {
+        padding: 3rem 1rem;
+        text-align: center;
+        color: var(--ink-3);
+        border: 1px dashed var(--hair-2);
+        border-radius: 6px;
+        font-size: 0.9rem;
+      }
+
+      /* ---------- 三端下载 ---------- */
+      .clients {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: clamp(0.9rem, 2vw, 1.35rem);
+      }
+
+      @media (max-width: 900px) {
+        .clients {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .client {
+        background: var(--paper-2);
+        border: 1px solid var(--hair);
+        border-radius: 6px;
+        padding: 1.35rem 1.4rem 1.5rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.9rem;
+        transition: transform 0.45s var(--ease), border-color 0.3s var(--ease);
+      }
+
+      .client:hover {
+        transform: translateY(-4px);
+        border-color: var(--hair-2);
+      }
+
+      .client-top {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+      }
+
+      .client-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 5px;
+        display: grid;
+        place-items: center;
+        background: var(--accent-soft);
+        color: var(--accent);
+        border: 1px solid oklch(86% 0.06 30);
+        flex: none;
+      }
+
+      .client-title {
+        font-family: var(--font-display);
+        font-weight: 800;
+        font-size: 1.05rem;
+        letter-spacing: -0.02em;
+      }
+
+      .client-en {
+        font-family: var(--font-mono);
+        font-size: 0.68rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--ink-3);
+      }
+
+      .client-desc {
+        font-size: 0.86rem;
+        color: var(--ink-2);
+        margin: 0;
+        line-height: 1.65;
+      }
+
+      .plat {
+        border: 1px solid var(--hair);
+        border-radius: 5px;
+        padding: 0.7rem 0.8rem;
+      }
+
+      .plat-name {
+        font-weight: 650;
+        font-size: 0.88rem;
+        display: flex;
+        align-items: center;
+        gap: 0.45rem;
+        flex-wrap: wrap;
+      }
+
+      .badge {
+        font-family: var(--font-mono);
+        font-size: 0.64rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        padding: 0.1rem 0.38rem;
+        border-radius: 3px;
+        background: var(--accent);
+        color: #fff;
+      }
+
+      .plat-meta {
+        font-family: var(--font-mono);
+        font-size: 0.72rem;
+        color: var(--ink-3);
+        margin-top: 0.25rem;
+      }
+
+      .plat-actions {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        margin-top: 0.55rem;
+        flex-wrap: wrap;
+      }
+
+      .mirror {
+        font-size: 0.74rem;
+        color: var(--ink-3);
+        border-bottom: 1px dashed var(--hair-2);
+      }
+
+      .mirror:hover {
+        color: var(--accent);
+      }
+
+      /* ---------- 播放器弹窗 ---------- */
+      .modal {
+        position: fixed;
+        inset: 0;
+        z-index: 90;
+        background: oklch(12% 0.02 60 / 0.9);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: clamp(0.75rem, 3vw, 2rem);
+      }
+
+      .modal.open {
+        display: flex;
+      }
+
+      .modal-box {
+        width: min(960px, 100%);
+        max-height: 92vh;
+        overflow: auto;
+        background: var(--stage);
+        border: 1px solid oklch(35% 0.02 60);
+        border-radius: 8px;
+        color: #fff;
+      }
+
+      .modal-head {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 0.9rem 1.1rem;
+        border-bottom: 1px solid oklch(30% 0.02 60);
+      }
+
+      .modal-head h3 {
+        color: #fff;
+        font-family: var(--font-display);
+        font-size: 1rem;
+        font-weight: 700;
+        margin: 0;
+      }
+
+      .modal-head .sub {
+        font-family: var(--font-mono);
+        font-size: 0.72rem;
+        color: oklch(70% 0.015 80);
+        margin-top: 0.15rem;
+      }
+
+      .close {
+        margin-left: auto;
+        background: transparent;
+        border: 1px solid oklch(40% 0.02 62);
+        color: oklch(85% 0.015 85);
+        border-radius: 4px;
+        width: 32px;
+        height: 32px;
+        cursor: pointer;
+        font-size: 1.1rem;
+        line-height: 1;
+      }
+
+      .close:hover {
+        border-color: var(--accent);
+        color: #fff;
+      }
+
+      .modal video {
+        width: 100%;
+        aspect-ratio: 16 / 9;
+        background: #000;
+        display: block;
+      }
+
+      .eps {
+        display: flex;
+        gap: 0.4rem;
+        flex-wrap: wrap;
+        padding: 0.9rem 1.1rem 1.2rem;
+      }
+
+      .ep {
+        border: 1px solid oklch(38% 0.02 62);
+        background: oklch(24% 0.02 58);
+        color: oklch(88% 0.01 85);
+        border-radius: 4px;
+        padding: 0.35rem 0.7rem;
+        font: inherit;
+        font-size: 0.82rem;
+        cursor: pointer;
+      }
+
+      .ep:hover,
+      .ep.on {
+        border-color: var(--accent);
+        background: var(--accent);
+        color: #fff;
+      }
+
+      .modal-note {
+        padding: 0 1.1rem 1.2rem;
+        font-size: 0.78rem;
+        color: oklch(68% 0.015 80);
+        line-height: 1.7;
+      }
+
+      .modal-desc {
+        padding: 0.9rem 1.1rem 0;
+        font-size: 0.84rem;
+        color: oklch(80% 0.015 85);
+        line-height: 1.75;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+
+      /* ---------- 片源设置 ---------- */
+      .sbody {
+        padding: 1.1rem 1.1rem 0.4rem;
+      }
+
+      .srow {
+        margin-bottom: 1.05rem;
+      }
+
+      .srow > label {
+        display: block;
+        font-size: 0.78rem;
+        color: oklch(84% 0.015 85);
+        font-weight: 600;
+        margin-bottom: 0.45rem;
+      }
+
+      .srow input[type="text"],
+      .srow textarea {
+        width: 100%;
+        font-family: var(--font-mono);
+        font-size: 0.78rem;
+        padding: 0.5rem 0.6rem;
+        border-radius: 4px;
+        border: 1px solid oklch(40% 0.02 62);
+        background: oklch(24% 0.02 58);
+        color: #fff;
+      }
+
+      .srow textarea {
+        min-height: 80px;
+        line-height: 1.6;
+        resize: vertical;
+      }
+
+      .shint {
+        font-size: 0.74rem;
+        color: oklch(66% 0.015 80);
+        margin-top: 0.35rem;
+        line-height: 1.6;
+      }
+
+      .src-item {
+        margin-bottom: 0.7rem;
+      }
+
+      .src-line {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr) auto auto;
+        gap: 0.45rem;
+        align-items: center;
+      }
+
+      .src-res {
+        font-family: var(--font-mono);
+        font-size: 0.7rem;
+        margin-top: 0.3rem;
+        min-height: 0;
+        color: oklch(70% 0.015 80);
+        line-height: 1.5;
+      }
+
+      .src-res.ok {
+        color: oklch(72% 0.14 152);
+      }
+
+      .src-res.bad {
+        color: oklch(72% 0.16 30);
+      }
+
+      .src-test {
+        border: 1px solid oklch(42% 0.02 62);
+        background: transparent;
+        color: oklch(88% 0.015 85);
+        border-radius: 4px;
+        height: 34px;
+        padding: 0 0.6rem;
+        font: inherit;
+        font-size: 0.78rem;
+        cursor: pointer;
+        white-space: nowrap;
+      }
+
+      .src-test:hover {
+        border-color: var(--accent);
+        color: var(--accent);
+      }
+
+      .src-test:disabled {
+        opacity: 0.5;
+        cursor: wait;
+      }
+
+      .src-item input[type="text"] {
+        margin: 0;
+      }
+
+      .sbtns {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        margin-top: 0.5rem;
+      }
+
+      .sbtns button {
+        border: 1px solid oklch(42% 0.02 62);
+        background: oklch(26% 0.02 58);
+        color: oklch(88% 0.015 85);
+        border-radius: 4px;
+        padding: 0.35rem 0.7rem;
+        font: inherit;
+        font-size: 0.8rem;
+        cursor: pointer;
+      }
+
+      .sbtns button:hover {
+        border-color: var(--accent);
+        color: #fff;
+      }
+
+      .sfoot {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.9rem 1.1rem 1.1rem;
+        border-top: 1px solid oklch(30% 0.02 60);
+        flex-wrap: wrap;
+      }
+
+      .sfoot span {
+        font-size: 0.78rem;
+        color: oklch(70% 0.015 80);
+        flex: 1 1 12rem;
+      }
+
+      .sfoot div {
+        display: flex;
+        gap: 0.5rem;
+      }
+
+      .src-del {
+        width: 34px;
+        height: 34px;
+        border: 1px solid oklch(42% 0.02 62);
+        background: transparent;
+        color: oklch(88% 0.015 85);
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 1rem;
+        line-height: 1;
+      }
+
+      .src-del:hover {
+        border-color: var(--accent);
+        color: var(--accent);
+      }
+
+      .search-status {
+        text-align: center;
+        font-size: 0.82rem;
+        color: var(--ink-3);
+        margin-bottom: 1rem;
+        min-height: 1.2em;
+      }
+
+      .search-status.err {
+        color: var(--accent);
+      }
+
+      /* ---------- 说明 / 页脚 ---------- */
+      .cols {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr));
+        gap: 1.25rem;
+      }
+
+      .cardbox {
+        border: 1px solid var(--hair);
+        border-radius: 6px;
+        background: var(--paper-2);
+        padding: 1.2rem 1.3rem;
+      }
+
+      .cardbox h3 {
+        font-family: var(--font-display);
+        font-size: 1rem;
+        margin: 0 0 0.55rem;
+      }
+
+      .cardbox p {
+        margin: 0;
+        font-size: 0.85rem;
+        color: var(--ink-2);
+        line-height: 1.75;
+      }
+
+      .steps {
+        counter-reset: s;
+        list-style: none;
+        padding: 0;
+        margin: 0.8rem 0 0;
+      }
+
+      .steps li {
+        counter-increment: s;
+        position: relative;
+        padding-left: 2rem;
+        margin-bottom: 0.7rem;
+        font-size: 0.85rem;
+        color: var(--ink-2);
+        line-height: 1.7;
+      }
+
+      .steps li::before {
+        content: counter(s);
+        position: absolute;
+        left: 0;
+        top: 0.12rem;
+        width: 1.4rem;
+        height: 1.4rem;
+        border-radius: 50%;
+        background: var(--accent-soft);
+        color: var(--accent);
+        font-family: var(--font-mono);
+        font-size: 0.7rem;
+        display: grid;
+        place-items: center;
+      }
+
+      code {
+        font-family: var(--font-mono);
+        font-size: 0.76rem;
+        background: oklch(95% 0.01 88);
+        border: 1px solid var(--hair);
+        border-radius: 3px;
+        padding: 0.08rem 0.32rem;
+      }
+
+      hr.rule {
+        height: 1px;
+        background: var(--hair);
+        border: 0;
+        margin: 0;
+      }
+
+      .disclaimer {
+        border: 1px solid var(--hair);
+        border-left: 3px solid var(--accent);
+        border-radius: 5px;
+        background: oklch(96% 0.008 88);
+        padding: 1.1rem 1.25rem;
+      }
+
+      .disclaimer p {
+        margin: 0 0 0.6rem;
+        font-size: 0.83rem;
+        line-height: 1.78;
+        color: var(--ink-2);
+      }
+
+      .disclaimer p:last-child {
+        margin-bottom: 0;
+      }
+
+      footer {
+        background: var(--stage);
+        color: oklch(72% 0.015 80);
+        padding-block: 2rem 2.5rem;
+        font-size: 0.8rem;
+      }
+
+      .foot-inner {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem 1.5rem;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .foot-links {
+        display: flex;
+        gap: 1.1rem;
+        flex-wrap: wrap;
+      }
+
+      .foot-links a:hover {
+        color: #fff;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        * {
+          transition-duration: 0.001ms !important;
+          animation-duration: 0.001ms !important;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <header class="nav">
+      <div class="wrap nav-inner">
+        <a class="brand" href="./index.html">
+          <span class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="13" height="13" fill="none">
+              <path d="M9 6.5l9 5.5-9 5.5z" fill="#c9402f" />
+            </svg>
+          </span>
+          Ouonnki<em>影视</em>
+        </a>
+        <nav class="nav-links">
+          <a href="#wall">片库</a>
+          <a href="#clients">三端客户端</a>
+          <a href="#how">接入片源</a>
+          <a href="./tools.html">工具箱</a>
+        </nav>
+        <div class="nav-right">
+          <button class="btn btn-outline btn-sm" id="open-settings">片源设置</button>
+          <a class="btn btn-outline btn-sm" href="./download.html">项目主页</a>
+          <a class="btn btn-accent btn-sm" href="#clients">下载客户端</a>
+        </div>
+      </div>
+    </header>
+
+    <!-- ================= HERO ================= -->
+    <section class="hero">
+      <div class="wrap">
+        <h1>
+          想看的片，一次搜完全网<span class="slash">。</span><br />
+          电视、电脑、手机接着看<span class="slash">。</span>
+        </h1>
+        <p>
+          聚合多个视频源的结果，自动匹配海报与简介，打开就能播。
+          下面是可直接体验的片库演示；接上你自己的片源后，搜索范围由你决定。
+        </p>
+        <form class="searchbar" id="search-form">
+          <input
+            id="q"
+            type="search"
+            placeholder="搜索电影、剧集、综艺、动漫…"
+            autocomplete="off"
+          />
+          <button class="btn btn-accent" type="submit">搜索</button>
+        </form>
+        <div class="hot" id="hot">
+          <span>大家都在搜：</span>
+        </div>
+        <div class="hot" style="margin-top: 0.85rem">
+          <button id="hero-settings" style="border-color: oklch(48% 0.03 60)">
+            ⚙ 设置 → 视频源（粘贴你自己的接口地址）
+          </button>
+          <span id="hero-src"></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= 轮播 ================= -->
+    <section class="sec" style="padding-bottom: 0">
+      <div class="wrap">
+        <div class="banner" id="banner">
+          <div class="dots" id="dots"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= 片库 ================= -->
+    <section class="sec" id="wall">
+      <div class="wrap">
+        <div class="sec-head">
+          <h2>片库</h2>
+          <span class="demo-tag">界面演示数据 · 海报为免费图库占位图</span>
+          <span class="sec-note" id="count"></span>
+        </div>
+        <div class="cats" id="cats"></div>
+        <div class="search-status" id="search-status"></div>
+        <div class="grid" id="grid"></div>
+          <div class="empty" id="empty" hidden>
+            <div id="empty-text">
+              没有匹配的结果。演示片库只有少量条目；接入自己的片源后可搜索全量内容。
+            </div>
+            <button
+              class="btn btn-accent btn-sm"
+              id="empty-settings"
+              style="margin-top: 1rem"
+            >
+              打开片源设置
+            </button>
+          </div>
+      </div>
+    </section>
+
+    <hr class="rule" />
+
+    <!-- ================= 三端客户端 ================= -->
+    <section class="sec" id="clients">
+      <div class="wrap">
+        <div class="sec-head">
+          <h2>三端客户端下载</h2>
+          <span class="sec-note">同一个收藏与进度，换设备接着看</span>
+        </div>
+        <div class="clients" id="clients-box"></div>
+        <p style="font-size: 0.82rem; color: var(--ink-3); margin-top: 1.1rem">
+          安装包由本站直供（<code>./download/</code>），点开即可下载，同时保留 GitHub Releases 备用地址。
+          Android 首次安装需允许「未知来源应用」；Windows 便携版解压后双击
+          <code>OuonnkiTV.exe</code>，若出现 SmartScreen 提示，点「更多信息 → 仍要运行」。
+          完整 SHA256 与上传 Release 的步骤见
+          <a href="./release-guide.html" style="color: var(--accent)">发布指引</a>。
+        </p>
+      </div>
+    </section>
+
+    <hr class="rule" />
+
+    <!-- ================= 接入片源 ================= -->
+    <section class="sec" id="how">
+      <div class="wrap">
+        <div class="sec-head">
+          <h2>网站本身不存片，片源由你自己接</h2>
+        </div>
+        <div class="cols">
+          <div class="cardbox">
+            <h3>为什么默认是演示数据</h3>
+            <p>
+              OuonnkiTV 是开源的视频聚合前端，只负责检索与播放的实现，
+              不内置、不托管、不缓存任何影视内容。没配置片源时，页面展示的是演示条目；
+              一旦你在设置里填入自己的接口，搜索与播放就全部走你的源。
+            </p>
+          </div>
+          <div class="cardbox">
+            <h3>三步接上片源（本页就能做）</h3>
+            <ol class="steps">
+              <li>
+                点页面右上角（或 Hero 区）的 <b>「片源设置」</b>，粘贴你的接口地址，例如
+                <code>https://你的域名</code>，保存。
+              </li>
+              <li>
+                回到顶部搜索框输入片名，页面会并发请求你配置的所有源并合并结果。
+              </li>
+              <li>
+                若浏览器报跨域（CORS），在设置里填一个<b>代理前缀</b>
+                （形如 <code>https://你的域名/proxy?url=</code>）即可 ——
+                <a href="./proxy-guide.html" target="_blank">怎么搭代理</a>；
+                自部署 OuonnkiTV 实例时也可用环境变量
+                <code>OKI_INITIAL_VIDEO_SOURCES</code> 预置。
+              </li>
+            </ol>
+            <p style="margin-top:.7rem">
+              <a href="./source-guide.html" target="_blank">详细图文教程：托管文件 / 写 JSON / 接设置（含可复制命令与扫描脚本）</a>
+            </p>
+          </div>
+          <div class="cardbox">
+            <h3>不想折腾就装客户端</h3>
+            <p>
+              三端客户端内置了同样的能力，装上就能用，省去部署步骤。
+              想先试试网页效果，也可以打开工具箱处理自己的字幕与媒体文件。
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="rule" />
+
+    <!-- ================= 免责 ================= -->
+    <section class="sec" id="legal">
+      <div class="wrap">
+        <div class="sec-head"><h2>使用与免责</h2></div>
+        <div class="disclaimer">
+          <p>
+            本站为 OuonnkiTV 开源项目的演示前端，按
+            <a href="https://github.com/1333555777/OuonnkiTV/blob/main/LICENSE" target="_blank" rel="noopener" style="color: var(--accent)">Apache License 2.0</a>
+            协议开源，仅提供搜索结果展示与播放功能的代码实现，不提供任何可直接使用的成品影视服务。
+          </p>
+          <p>
+            本站不提供、不托管、不上传、不存储、不分发、不缓存任何视频、音频、图片或其他受版权保护的内容。
+            页面中的片名与条目均为界面演示数据，海报位置使用免费图库（picsum.photos，Unsplash 授权）的风景占位图，
+            与影片本身无关；不含任何真实播放地址，实际播放内容全部由使用者自行配置的第三方接口提供。
+          </p>
+          <p>
+            使用者应遵守所在国家或地区的法律法规，尊重内容创作者的知识产权，
+            并对自行部署的实例及其产生的一切行为与后果承担全部责任。
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <div class="wrap foot-inner">
+        <span>OuonnkiTV · 开源影视聚合前端 · 不托管任何内容</span>
+        <nav class="foot-links">
+          <a href="./index.html">片库</a>
+          <a href="./download.html">项目主页</a>
+          <a href="./proxy-guide.html">跨域代理</a>
+          <a href="./release-guide.html">发布指引</a>
+          <a href="./tools.html">工具箱</a>
+          <a href="https://github.com/1333555777/OuonnkiTV" target="_blank" rel="noopener">GitHub</a>
+        </nav>
+      </div>
+    </footer>
+
+    <!-- ================= 播放器 ================= -->
+    <div class="modal" id="modal" role="dialog" aria-modal="true">
+      <div class="modal-box">
+        <div class="modal-head">
+          <div>
+            <h3 id="m-title">标题</h3>
+            <div class="sub" id="m-sub"></div>
+          </div>
+          <button class="close" id="m-close" aria-label="关闭">×</button>
+        </div>
+        <p class="modal-desc" id="m-desc"></p>
+        <video id="m-video" controls preload="metadata" playsinline></video>
+        <div class="eps" id="m-eps"></div>
+        <p class="modal-note">
+          演示片源为 Blender 基金会《Big Buck Bunny》（CC-BY 3.0）公版样片，仅用于验证播放器；
+          真实内容由你自己的片源提供。
+        </p>
+      </div>
+    </div>
+
+    <script>
+      "use strict";
+      /* ============================================================
+         演示片库（仅界面演示，不含任何真实播放地址）
+         ============================================================ */
+      var DEMO_SRC = "https://media.w3.org/2010/05/sintel/trailer.mp4";
+
+      var ITEMS = [
+        { t: "山河故人", y: 2015, c: "电影", r: "中国大陆", tags: ["剧情", "家庭"], d: "跨越二十六年的三段人生，关于离别与重逢。" , g: ["#3a2f28", "#7a5c44"] },
+        { t: "海边的曼彻斯特", y: 2016, c: "电影", r: "美国", tags: ["剧情", "治愈"], d: "一个男人回到故乡，学习与过去共处。", g: ["#22323f", "#4d6f84"] },
+        { t: "银翼杀手 2049", y: 2017, c: "电影", r: "美国", tags: ["科幻", "悬疑"], d: "雨、霓虹与记忆，一场关于身份的追问。", g: ["#2b1f33", "#7b4a6b"] },
+        { t: "千与千寻", y: 2001, c: "动漫", r: "日本", tags: ["动画", "奇幻"], d: "少女误入神灵世界，用劳动与名字找回自己。", g: ["#1f3a2e", "#5c8c6a"] },
+        { t: "漫长的季节", y: 2023, c: "剧集", r: "中国大陆", tags: ["悬疑", "年代"], d: "东北老工业城市的秋天，三个老人追凶二十年。", g: ["#3d2a1f", "#8a5a2b"] },
+        { t: "宇宙探索编辑部", y: 2021, c: "电影", r: "中国大陆", tags: ["喜剧", "科幻"], d: "一个落魄主编踏上荒诞的寻外星人之旅。", g: ["#262b3d", "#5a6a9c"] },
+        { t: "切尔诺贝利", y: 2019, c: "剧集", r: "美国", tags: ["历史", "灾难"], d: "真相的代价，被一层层挖出来。", g: ["#2c2c2c", "#6b6b5c"] },
+        { t: "我的天才女友", y: 2018, c: "剧集", r: "意大利", tags: ["剧情", "女性"], d: "那不勒斯的两个女孩，一生的友谊与角力。", g: ["#332a2f", "#7d5f66"] },
+        { t: "瞬息全宇宙", y: 2022, c: "电影", r: "美国", tags: ["奇幻", "喜剧"], d: "在无数个宇宙里，她只想好好爱一次。", g: ["#3b2233", "#8c4f7a"] },
+        { t: "风味人间", y: 2018, c: "纪录片", r: "中国大陆", tags: ["美食", "人文"], d: "从山川到餐桌，食物连接着人与土地。", g: ["#3a2a1c", "#96713c"] },
+        { t: "蓝色星球 II", y: 2017, c: "纪录片", r: "英国", tags: ["自然", "海洋"], d: "深蓝之下的生命图景与脆弱的平衡。", g: ["#123040", "#2f7c96"] },
+        { t: "乐队的夏天", y: 2019, c: "综艺", r: "中国大陆", tags: ["音乐", "真人秀"], d: "三十一支乐队，一个夏天的现场。", g: ["#3a1f1f", "#96463c"] },
+        { t: "进击的巨人 最终季", y: 2020, c: "动漫", r: "日本", tags: ["热血", "战争"], d: "墙外的真相，终于轮到他们亲眼看见。", g: ["#2a2622", "#7a6a4a"] },
+        { t: "罗马", y: 2018, c: "电影", r: "墨西哥", tags: ["剧情", "黑白"], d: "一个女佣的一年，一座城市的呼吸。", g: ["#232323", "#6e6e6e"] },
+        { t: "燃烧", y: 2018, c: "电影", r: "韩国", tags: ["悬疑", "剧情"], d: "消失的女孩，和被烧掉的塑料棚。", g: ["#332417", "#9a6a35"] },
+        { t: "幕后之王", y: 2024, c: "纪录片", r: "美国", tags: ["电影史", "访谈"], d: "那些塑造了电影的人，讲述镜头之外的事。", g: ["#26202c", "#6b5b80"] },
+      ];
+
+      var CATS = ["全部", "电影", "剧集", "综艺", "动漫", "纪录片"];
+      var HOT = ["科幻", "悬疑", "治愈", "纪录片", "动漫"];
+
+      var state = { cat: "全部", q: "" };
+
+      /* ---------- 海报墙 ---------- */
+      var grid = document.getElementById("grid");
+      var emptyBox = document.getElementById("empty");
+
+      /* 演示用占位图：picsum.photos 免费图库（Unsplash 授权），
+         加载失败时自动回落到每部片自带的渐变底色 */
+      function backdrop(seed, w, h) {
+        return (
+          "url('https://picsum.photos/seed/" + seed + "/" + w + "/" + h + "')"
+        );
+      }
+
+      function match(it) {
+        if (state.cat !== "全部" && it.c !== state.cat) return false;
+        if (!state.q) return true;
+        var s = (it.t + it.r + it.tags.join("") + it.c + it.y).toLowerCase();
+        return s.indexOf(state.q.toLowerCase()) > -1;
+      }
+
+      /* ============================================================
+         片源配置（存在浏览器本地，不会上传）
+         ============================================================ */
+      var CFG = (function () {
+        try {
+          var c = JSON.parse(localStorage.getItem("ouonnki.cfg") || "null");
+          if (c && typeof c === "object") {
+            c.sources = c.sources || [];
+            c.proxy = c.proxy || "";
+            c.tmdb = c.tmdb || "";
+            return c;
+          }
+        } catch (e) {}
+        return { sources: [], proxy: "", tmdb: "" };
+      })();
+
+      function saveCfg() {
+        try {
+          localStorage.setItem("ouonnki.cfg", JSON.stringify(CFG));
+        } catch (e) {}
+      }
+
+      var real = []; // 真实搜索结果
+      var shown = [];
+
+      function statusEl() {
+        return document.getElementById("search-status");
+      }
+
+      function setStatus(msg, isErr) {
+        var el = statusEl();
+        if (!el) return;
+        el.textContent = msg || "";
+        el.className = "search-status" + (isErr ? " err" : "");
+      }
+
+      function apiUrl(base, params) {
+        var b = String(base).replace(/\/+$/, "");
+        // 以 .json / .txt 结尾就当静态数据文件直接用，否则按苹果 CMS 接口拼路径
+        var u = /\.(json|txt)$/i.test(b)
+          ? b
+          : b + "/api.php/provide/vod/?ac=videolist&" + params;
+        return CFG.proxy ? CFG.proxy + encodeURIComponent(u) : u;
+      }
+
+      function fetchJSON(url, ms) {
+        var ctl = typeof AbortController === "function" ? new AbortController() : null;
+        var timer = null;
+        var p = fetch(url, ctl ? { signal: ctl.signal } : undefined).then(function (r) {
+          clearTimeout(timer);
+          if (!r.ok) throw new Error("HTTP " + r.status);
+          return r.json();
+        });
+        if (ctl) {
+          timer = setTimeout(function () {
+            ctl.abort();
+          }, ms || 12000);
+        }
+        return p;
+      }
+
+      function parseEps(from, url) {
+        var out = [];
+        var groups = String(url || "").split("$$$");
+        var names = String(from || "").split("$$$");
+        groups.forEach(function (g, gi) {
+          if (!g) return;
+          var label = names[gi] || "线路 " + (gi + 1);
+          g.split("#").forEach(function (seg) {
+            var parts = seg.split("$");
+            if (!seg) return;
+            var u = parts.length > 1 ? parts[parts.length - 1] : parts[0];
+            var n = parts.length > 1 ? parts[0] : label;
+            if (u && /^https?:/i.test(u.trim()))
+              out.push({ name: n, url: u.trim(), group: label });
+          });
+        });
+        return out;
+      }
+
+      function isStatic(base) {
+        return /\.(json|txt)$/i.test(String(base).replace(/\/+$/, ""));
+      }
+
+      function doSearch(q) {
+        var act = CFG.sources.filter(function (s) {
+          return s.enabled !== false && s.url;
+        });
+        if (!act.length) {
+          real = [];
+          setStatus("还没有配置片源，下面显示的是演示数据。点「片源设置」添加一个。");
+          render();
+          return;
+        }
+        setStatus("正在搜索 " + act.length + " 个片源…");
+        var acc = [];
+        var errs = [];
+        Promise.all(
+          act.map(function (s) {
+            return fetchJSON(apiUrl(s.url, "wd=" + encodeURIComponent(q)))
+              .then(function (j) {
+                var arr = (j && (j.list || j.data || j.videos)) || [];
+                // 静态 JSON 源没有服务端过滤，这里在本地按关键词再筛一遍
+                if (isStatic(s.url) && q) {
+                  var k = q.toLowerCase();
+                  arr = arr.filter(function (v) {
+                    var t = String(v.vod_name || v.name || "").toLowerCase();
+                    var c = String(v.vod_content || "").toLowerCase();
+                    return t.indexOf(k) > -1 || c.indexOf(k) > -1;
+                  });
+                }
+                arr.forEach(function (v) {
+                  acc.push({
+                    real: true,
+                    title: v.vod_name || v.name || "未命名",
+                    pic: v.vod_pic || "",
+                    type: v.type_name || "",
+                    year: v.vod_year || "",
+                    remarks: v.vod_remarks || "",
+                    source: s.name || s.url,
+                    id: v.vod_id,
+                    playFrom: v.vod_play_from || "",
+                    playUrl: v.vod_play_url || "",
+                    desc: String(v.vod_content || "").replace(/<[^>]+>/g, ""),
+                    api: s.url,
+                  });
+                });
+              })
+              .catch(function (e) {
+                errs.push((s.name || s.url) + "（" + (e.message || "请求失败") + "）");
+              });
+          })
+        ).then(function () {
+          real = acc;
+          if (!acc.length) {
+            setStatus(
+              errs.length
+                ? "片源都请求失败：" + errs.join("；") + "。多半是跨域被拦，去设置里填代理前缀。"
+                : "没有搜到结果，换个关键词试试。",
+              true
+            );
+          } else {
+            setStatus(
+              "找到 " + acc.length + " 条" + (errs.length ? "（" + errs.length + " 个源失败）" : "")
+            );
+          }
+          render();
+        });
+      }
+
+      /* ============================================================
+         渲染（有真实结果就显示真实结果，否则演示数据）
+         ============================================================ */
+      function render() {
+        var list = real.length ? real : ITEMS.filter(match);
+        shown = list;
+        grid.innerHTML = list
+          .map(function (it, i) {
+            var title = it.real ? it.title : it.t;
+            var meta = it.real
+              ? [it.type, it.year, it.remarks, it.source].filter(Boolean).join(" · ")
+              : it.y + " · " + it.r;
+            var bg = it.pic
+              ? "background-image:url('" + it.pic.replace(/'/g, "") + "')"
+              : it.real
+              ? "background-image:" +
+                backdrop("okir" + i, 400, 600) +
+                ", linear-gradient(160deg,#2a2622 0%,#5a5148 100%)"
+              : "background-image:" +
+                backdrop("oki" + i, 400, 600) +
+                ", linear-gradient(160deg," +
+                it.g[0] +
+                " 0%," +
+                it.g[1] +
+                " 100%)";
+            return (
+              '<button class="card" data-i="' +
+              i +
+              '">' +
+              '<div class="poster" style="' +
+              bg +
+              '">' +
+              '<span class="shade"></span>' +
+              '<span class="grain"></span>' +
+              (it.real ? "" : '<span class="glyph">' + title.charAt(0) + "</span>") +
+              '<span class="ptag">' +
+              (it.real ? it.type || "片源" : it.c) +
+              "</span>" +
+              '<span class="ptitle">' +
+              title +
+              "</span>" +
+              '<span class="play"><i><svg width="16" height="16" viewBox="0 0 24 24" fill="#fff"><path d="M8 5l11 7-11 7z"/></svg></i></span>' +
+              "</div>" +
+              '<div class="meta"><b>' +
+              title +
+              "</b><span>" +
+              meta +
+              "</span></div>" +
+              "</button>"
+            );
+          })
+          .join("");
+        emptyBox.hidden = list.length > 0;
+        document.getElementById("count").textContent = real.length
+          ? "搜索到 " + list.length + " 条"
+          : "共 " + list.length + " 部";
+        Array.prototype.forEach.call(grid.querySelectorAll(".card"), function (b) {
+          b.addEventListener("click", function () {
+            var it = shown[parseInt(b.dataset.i, 10)];
+            if (!it) return;
+            if (it.real) openReal(it);
+            else openPlayer(it);
+          });
+        });
+      }
+
+      /* ---------- 分类 ---------- */
+      var catsBox = document.getElementById("cats");
+      catsBox.innerHTML = CATS.map(function (c) {
+        return (
+          '<button class="cat' +
+          (c === state.cat ? " on" : "") +
+          '" data-c="' +
+          c +
+          '">' +
+          c +
+          "</button>"
+        );
+      }).join("");
+      catsBox.addEventListener("click", function (e) {
+        var b = e.target.closest(".cat");
+        if (!b) return;
+        state.cat = b.dataset.c;
+        Array.prototype.forEach.call(catsBox.children, function (x) {
+          x.classList.toggle("on", x === b);
+        });
+        render();
+      });
+
+      /* ---------- 搜索 ---------- */
+      var input = document.getElementById("q");
+      document
+        .getElementById("search-form")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+          state.q = input.value.trim();
+          state.cat = "全部";
+          Array.prototype.forEach.call(catsBox.children, function (x) {
+            x.classList.toggle("on", x.dataset.c === "全部");
+          });
+          if (state.q) doSearch(state.q);
+          else {
+            real = [];
+            setStatus("");
+            render();
+          }
+          document.getElementById("wall").scrollIntoView({ block: "start" });
+        });
+
+      var hotBox = document.getElementById("hot");
+      HOT.forEach(function (h) {
+        var b = document.createElement("button");
+        b.textContent = h;
+        b.addEventListener("click", function () {
+          input.value = h;
+          state.q = h;
+          state.cat = "全部";
+          Array.prototype.forEach.call(catsBox.children, function (x) {
+            x.classList.toggle("on", x.dataset.c === "全部");
+          });
+          doSearch(h);
+          document.getElementById("wall").scrollIntoView({ block: "start" });
+        });
+        hotBox.appendChild(b);
+      });
+
+      /* ---------- 轮播 ---------- */
+      var FEATURE = [ITEMS[2], ITEMS[4], ITEMS[8], ITEMS[10]];
+      var banner = document.getElementById("banner");
+      var dots = document.getElementById("dots");
+
+      FEATURE.forEach(function (it, idx) {
+        var s = document.createElement("div");
+        s.className = "slide" + (idx === 0 ? " on" : "");
+        s.style.backgroundImage =
+          backdrop("okib" + idx, 1600, 900) +
+          ", linear-gradient(140deg," +
+          it.g[0] +
+          " 0%," +
+          it.g[1] +
+          " 100%)";
+        s.innerHTML =
+          '<div class="slide-inner">' +
+          '<div class="slide-kicker">今日推荐</div>' +
+          "<h3>" +
+          it.t +
+          "</h3>" +
+          '<div class="slide-meta"><span>' +
+          it.y +
+          "</span><span>" +
+          it.r +
+          "</span><span>" +
+          it.c +
+          "</span><span>" +
+          it.tags.join(" / ") +
+          "</span></div>" +
+          "<p>" +
+          it.d +
+          "</p>" +
+          '<button class="btn btn-accent btn-sm">立即播放</button>' +
+          "</div>";
+        s.querySelector("button").addEventListener("click", function () {
+          openPlayer(it);
+        });
+        banner.insertBefore(s, dots);
+
+        var d = document.createElement("button");
+        d.className = idx === 0 ? "on" : "";
+        d.setAttribute("aria-label", "第 " + (idx + 1) + " 张");
+        d.addEventListener("click", function () {
+          go(idx);
+          restart();
+        });
+        dots.appendChild(d);
+      });
+
+      var cur = 0;
+      var timer = null;
+
+      function go(n) {
+        cur = (n + FEATURE.length) % FEATURE.length;
+        Array.prototype.forEach.call(banner.querySelectorAll(".slide"), function (
+          s,
+          i
+        ) {
+          s.classList.toggle("on", i === cur);
+        });
+        Array.prototype.forEach.call(dots.children, function (d, i) {
+          d.classList.toggle("on", i === cur);
+        });
+      }
+
+      function restart() {
+        if (timer) clearInterval(timer);
+        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+        timer = setInterval(function () {
+          go(cur + 1);
+        }, 5200);
+      }
+
+      restart();
+
+      /* ---------- 播放器 ---------- */
+      var modal = document.getElementById("modal");
+      var video = document.getElementById("m-video");
+
+      var hls = null;
+
+      function stopHls() {
+        if (hls) {
+          try {
+            hls.destroy();
+          } catch (e) {}
+          hls = null;
+        }
+      }
+
+      function playUrl(u) {
+        stopHls();
+        if (!u) return;
+        var src = CFG.proxy ? CFG.proxy + encodeURIComponent(u) : u;
+        if (/\.m3u8(\?|$)/i.test(u)) {
+          if (window.Hls && window.Hls.isSupported()) {
+            hls = new window.Hls();
+            hls.loadSource(src);
+            hls.attachMedia(video);
+          } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
+            video.src = src;
+          } else {
+            setEpNote("这个浏览器不能直接播放 m3u8，请在「片源设置」里填代理前缀后重试。");
+            return;
+          }
+        } else {
+          video.src = src;
+        }
+        video.play().catch(function () {});
+      }
+
+      function setEpNote(msg) {
+        var n = document.querySelector(".modal-note");
+        if (n) n.textContent = msg || "";
+      }
+
+      /* opt: {title, sub, desc, eps:[{name,url}], demo} */
+      function showPlayer(opt) {
+        document.getElementById("m-title").textContent = opt.title;
+        document.getElementById("m-sub").textContent = opt.sub || "";
+        var descEl = document.getElementById("m-desc");
+        if (descEl) {
+          descEl.textContent = opt.desc || "";
+          descEl.style.display = opt.desc ? "block" : "none";
+        }
+        var eps = document.getElementById("m-eps");
+        eps.innerHTML = "";
+        setEpNote(
+          opt.demo
+            ? "演示片源为 Blender 基金会《Sintel》预告片（CC-BY 授权），仅用于验证播放器；真实内容由你自己的片源提供。"
+            : "播放地址来自你配置的片源。若无法播放，多半是跨域或该线路失效，换一集或在设置里填代理前缀。"
+        );
+        var list = opt.eps || [];
+        if (list.length > 1 || (list.length === 1 && !opt.demo)) {
+          list.forEach(function (ep, i) {
+            var b = document.createElement("button");
+            b.className = "ep" + (i === 0 ? " on" : "");
+            b.textContent = ep.name || "第 " + (i + 1) + " 集";
+            b.addEventListener("click", function () {
+              Array.prototype.forEach.call(eps.children, function (x) {
+                x.classList.remove("on");
+              });
+              b.classList.add("on");
+              playUrl(ep.url);
+            });
+            eps.appendChild(b);
+          });
+        }
+        if (list.length && !opt.demo) playUrl(list[0].url);
+        else video.src = DEMO_SRC;
+        modal.classList.add("open");
+        video.play().catch(function () {});
+      }
+
+      function openPlayer(it) {
+        var n = it.c === "电影" ? 1 : 12;
+        var eps = [];
+        for (var i = 1; i <= n; i++) {
+          eps.push({ name: "第 " + i + " 集", url: DEMO_SRC });
+        }
+        showPlayer({
+          title: it.t,
+          sub: it.y + " · " + it.r + " · " + it.c + " · " + it.tags.join(" / "),
+          desc: it.d,
+          eps: eps,
+          demo: true,
+        });
+      }
+
+      function openReal(it) {
+        var eps = parseEps(it.playFrom, it.playUrl);
+        var finish = function () {
+          if (!eps.length)
+            setEpNote("这个条目没有解析到播放地址，片源返回的数据可能不含播放地址字段。");
+          showPlayer({
+            title: it.title,
+            sub: [it.type, it.year, it.remarks, it.source].filter(Boolean).join(" · "),
+            desc: it.desc,
+            eps: eps,
+            demo: false,
+          });
+        };
+        if (eps.length) {
+          finish();
+          return;
+        }
+        setEpNote("正在获取播放地址…");
+        modal.classList.add("open");
+        document.getElementById("m-title").textContent = it.title;
+        document.getElementById("m-sub").textContent = it.source || "";
+        fetchJSON(apiUrl(it.api, "ids=" + encodeURIComponent(it.id)))
+          .then(function (j) {
+            var v = (j && (j.list || j.data) && (j.list || j.data)[0]) || {};
+            eps = parseEps(v.vod_play_from || it.playFrom, v.vod_play_url || it.playUrl);
+            if (v.vod_content)
+              it.desc = String(v.vod_content).replace(/<[^>]+>/g, "");
+            finish();
+          })
+          .catch(function () {
+            eps = [];
+            finish();
+          });
+      }
+
+      document.getElementById("m-close").addEventListener("click", closePlayer);
+      modal.addEventListener("click", function (e) {
+        if (e.target === modal) closePlayer();
+      });
+      document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape") closePlayer();
+      });
+
+      function closePlayer() {
+        modal.classList.remove("open");
+        video.pause();
+        video.removeAttribute("src");
+        video.load();
+      }
+
+      /* ---------- 三端客户端下载 ---------- */
+      var LOCAL_DL = "./download/";
+      var RELEASE_BASE =
+        "https://github.com/1333555777/OuonnkiTV/releases/latest/download";
+      var RELEASE_PAGE =
+        "https://github.com/1333555777/OuonnkiTV/releases";
+      var VERSION = "v2.0.0";
+
+      var ICONS = {
+        tv: '<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="13" rx="2"/><path d="M8 3l4 4 4-4"/><path d="M10 12.5l4 2.5-4 2.5z" fill="currentColor" stroke="none"/></svg>',
+        pc: '<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></svg>',
+        phone:
+          '<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2" width="12" height="20" rx="3"/><path d="M11 18.5h2"/></svg>',
+      };
+
+      var CLIENTS = [
+        {
+          icon: "tv",
+          title: "TV 电视端",
+          en: "Android TV",
+          desc: "装在电视或盒子上，遥控器全程可操作，横屏启动；菜单键可随时改首页地址、刷新。",
+          items: [
+            {
+              n: "Android TV APK",
+              m: "17 KB · Android 7.0+ · 通用（无原生库，32/64 位通吃）",
+              f: "OuonnkiTV-TV-arm64-v2.0.0.apk",
+              sha: "955b39f8b8a7646f",
+            },
+          ],
+        },
+        {
+          icon: "pc",
+          title: "PC 桌面端",
+          en: "Windows / macOS",
+          desc: "独立窗口运行，不占浏览器标签页；支持全屏、缩放与自定义首页地址。",
+          items: [
+            {
+              n: "Windows 便携版（解压即用）",
+              m: "121 MB · Windows 10 及以上 · x64",
+              f: "OuonnkiTV-2.0.0-win-x64-portable.zip",
+              sha: "49fbb91879b32caf",
+            },
+            { n: "macOS 安装指引", m: "两步装成独立 App，无需下载包", u: "./release-guide.html#mac" },
+          ],
+        },
+        {
+          icon: "phone",
+          title: "手机端",
+          en: "Android / iOS",
+          desc: "竖屏海报流，进度与收藏跟电视、电脑保持一致，通勤路上接着看。",
+          items: [
+            {
+              n: "Android APK",
+              m: "17 KB · Android 7.0+",
+              f: "OuonnkiTV-Android-v2.0.0.apk",
+              sha: "c1c34a78c747ed15",
+            },
+            { n: "iOS 安装指引", m: "Safari 添加到主屏，免越狱免签名", u: "./release-guide.html#ios" },
+          ],
+        },
+      ];
+
+      document.getElementById("clients-box").innerHTML = CLIENTS.map(function (c) {
+        return (
+          '<article class="client">' +
+          '<div class="client-top"><span class="client-icon">' +
+          ICONS[c.icon] +
+          '</span><div><div class="client-title">' +
+          c.title +
+          '</div><div class="client-en">' +
+          c.en +
+          "</div></div></div>" +
+          '<p class="client-desc">' +
+          c.desc +
+          "</p>" +
+          c.items
+            .map(function (it) {
+              if (it.u) {
+                return (
+                  '<div class="plat"><div class="plat-name">' +
+                  it.n +
+                  "</div>" +
+                  '<div class="plat-meta">' +
+                  it.m +
+                  "</div>" +
+                  '<div class="plat-actions"><a class="btn btn-sm" style="background:transparent;color:var(--ink);border-color:var(--hair-2)" href="' +
+                  it.u +
+                  '">查看安装指引</a></div></div>'
+                );
+              }
+              var url = LOCAL_DL + it.f;
+              return (
+                '<div class="plat"><div class="plat-name">' +
+                it.n +
+                "</div>" +
+                '<div class="plat-meta">' +
+                it.m +
+                "</div>" +
+                '<div class="plat-meta">SHA256 ' +
+                it.sha +
+                "…</div>" +
+                '<div class="plat-actions"><a class="btn btn-accent btn-sm" data-file="' +
+                it.f +
+                '" href="' +
+                url +
+                '">立即下载</a>' +
+                '<a class="mirror" href="' +
+                RELEASE_BASE +
+                "/" +
+                it.f +
+                '">GitHub Releases</a>' +
+                "</div></div>"
+              );
+            })
+            .join("") +
+          '<div style="margin-top:auto"><a class="mirror" href="' +
+          RELEASE_PAGE +
+          '" target="_blank" rel="noopener">全部版本 / 校验信息 →</a></div>' +
+          "</article>"
+        );
+      }).join("");
+
+      /* 智能下载：先探测本站是否有这个文件，没有就自动跳 GitHub Releases，
+         这样无论托管在 Cloudflare Pages（小文件）还是放到 R2 / Releases（大文件）都不会 404 */
+      document.addEventListener("click", function (e) {
+        var a = e.target.closest ? e.target.closest("a[data-file]") : null;
+        if (!a) return;
+        e.preventDefault();
+        var f = a.getAttribute("data-file");
+        var local = LOCAL_DL + f;
+        var orig = a.textContent;
+        a.textContent = "检查中…";
+        var back = function () {
+          a.textContent = orig;
+        };
+        fetch(local, { method: "HEAD" })
+          .then(function (r) {
+            back();
+            if (r.ok) window.location.href = local;
+            else window.open(RELEASE_BASE + "/" + f, "_blank");
+          })
+          .catch(function () {
+            back();
+            window.open(RELEASE_BASE + "/" + f, "_blank");
+          });
+      });
+
+      /* ---------- 片源设置面板 ----------
+         面板 DOM 在主脚本之后，必须等解析完再接线，否则 getElementById 拿到 null
+         会直接中断脚本（首屏渲染也会被跳过） */
+      function setupSettings() {
+        var smodal = document.getElementById("smodal");
+        var sList = document.getElementById("s-list");
+
+        function esc(s) {
+          return String(s || "").replace(/"/g, "&quot;").replace(/</g, "&lt;");
+        }
+
+        function addSrcRow(data) {
+          data = data || {};
+          var row = document.createElement("div");
+          row.className = "src-item";
+          row.innerHTML =
+            '<div class="src-line">' +
+            '<input type="text" placeholder="名称，如：我的源" value="' +
+            esc(data.name) +
+            '" />' +
+            '<input type="text" placeholder="https://api.example.com" value="' +
+            esc(data.url) +
+            '" />' +
+            '<button type="button" class="src-test" title="用测试关键词请求一次，看是否返回有效 JSON">自检</button>' +
+            '<button type="button" class="src-del" title="删除">×</button>' +
+            "</div>" +
+            '<div class="src-res"></div>';
+          row.querySelector(".src-del").addEventListener("click", function () {
+            row.remove();
+          });
+          row.querySelector(".src-test").addEventListener("click", function () {
+            runTest(row, true);
+          });
+          sList.appendChild(row);
+        }
+
+        function rowUrl(r) {
+          return r.querySelectorAll('.src-line input[type="text"]')[1].value.trim();
+        }
+
+        function runTest(row, single) {
+          var url = rowUrl(row);
+          var res = row.querySelector(".src-res");
+          var btn = row.querySelector(".src-test");
+          var st = document.getElementById("s-status");
+          if (!/^https?:\/\//i.test(url)) {
+            res.className = "src-res bad";
+            res.textContent = "地址需以 http(s) 开头";
+            if (single) st.textContent = "地址需以 http(s) 开头。";
+            return Promise.resolve(null);
+          }
+          btn.disabled = true;
+          var old = btn.textContent;
+          btn.textContent = "…";
+          res.className = "src-res";
+          res.textContent = "请求中…";
+          var t0 = Date.now();
+          return fetchJSON(apiUrl(url, "wd=" + encodeURIComponent("的")), 12000)
+            .then(function (j) {
+              var arr = (j && (j.list || j.data || j.videos)) || [];
+              var withPlay = arr.filter(function (v) {
+                return v && (v.vod_play_url || v.play_url || v.url);
+              }).length;
+              var ms = Date.now() - t0;
+              var ok = arr.length > 0;
+              res.className = "src-res " + (ok ? "ok" : "bad");
+              res.textContent = ok
+                ? "有效：返回 " + arr.length + " 条，含播放地址 " + withPlay + " 条，耗时 " + ms + " ms"
+                : "接口通了但无数据（关键词无结果，或字段名不是 list/data/videos）";
+              if (single)
+                st.textContent = ok
+                  ? "有效：返回 " + arr.length + " 条，其中 " + withPlay + " 条带播放地址，耗时 " + ms + " ms。"
+                  : res.textContent;
+              return ok ? { url: url, n: arr.length } : null;
+            })
+            .catch(function (e) {
+              res.className = "src-res bad";
+              res.textContent = "失败：" + (e.message || e) + "（多为跨域或地址错误）";
+              if (single) st.textContent = res.textContent;
+              return null;
+            })
+            .then(function (v) {
+              btn.disabled = false;
+              btn.textContent = old;
+              return v;
+            });
+        }
+
+        /* 全部自检：并发跑一遍，最后给汇总 */
+        function testAll() {
+          var rows = Array.prototype.slice.call(sList.children);
+          var st = document.getElementById("s-status");
+          if (!rows.length) {
+            st.textContent = "还没有任何片源。";
+            return;
+          }
+          st.textContent = "正在自检 " + rows.length + " 个片源…";
+          Promise.all(
+            rows.map(function (r) {
+              return runTest(r, false);
+            })
+          ).then(function (ret) {
+            var ok = ret.filter(Boolean);
+            var total = ok.reduce(function (a, b) {
+              return a + b.n;
+            }, 0);
+            st.textContent =
+              "自检完成：" +
+              ok.length +
+              " / " +
+              rows.length +
+              " 个有效" +
+              (total ? "，共 " + total + " 条数据" : "") +
+              "。绿色为可用，可直接保存。";
+          });
+        }
+
+        function collectRows() {
+          return Array.prototype.map.call(sList.children, function (r) {
+            var ins = r.querySelectorAll('.src-line input[type="text"]');
+            return { name: ins[0].value.trim(), url: ins[1].value.trim(), enabled: true };
+          });
+        }
+
+        function openSettings() {
+          sList.innerHTML = "";
+          (CFG.sources.length ? CFG.sources : [{ name: "", url: "" }]).forEach(addSrcRow);
+          document.getElementById("s-proxy").value = CFG.proxy || "";
+          document.getElementById("s-tmdb").value = CFG.tmdb || "";
+          document.getElementById("s-json").value = "";
+          document.getElementById("s-status").textContent = "";
+          smodal.classList.add("open");
+        }
+
+        function closeSettings() {
+          smodal.classList.remove("open");
+        }
+
+        document.getElementById("open-settings").addEventListener("click", openSettings);
+        document.getElementById("hero-settings").addEventListener("click", openSettings);
+        document.getElementById("s-add").addEventListener("click", function () {
+          addSrcRow({});
+        });
+        document.getElementById("s-demo").addEventListener("click", function () {
+          addSrcRow({
+            name: "演示源（CC 授权）",
+            url: location.origin + "/source-demo.json",
+          });
+          document.getElementById("s-status").textContent =
+            "已添加本站演示源，点「自检」验证，或直接保存后搜「大雄兔」「Sintel」。";
+        });
+        document.getElementById("empty-settings").addEventListener("click", openSettings);
+        document.getElementById("s-close").addEventListener("click", closeSettings);
+        document.getElementById("s-cancel").addEventListener("click", closeSettings);
+        smodal.addEventListener("click", function (e) {
+          if (e.target === smodal) closeSettings();
+        });
+        document.addEventListener("keydown", function (e) {
+          if (e.key === "Escape" && smodal.classList.contains("open")) closeSettings();
+        });
+
+        document.getElementById("s-save").addEventListener("click", function () {
+          var rows = collectRows().filter(function (r) {
+            return r.name || r.url;
+          });
+          var ok = rows.filter(function (r) {
+            return /^https?:\/\//i.test(r.url);
+          });
+          document.getElementById("s-status").textContent =
+            ok.length !== rows.length
+              ? "有 " + (rows.length - ok.length) + " 行地址不是 http(s) 开头，已忽略。"
+              : "";
+          CFG.sources = ok;
+          CFG.proxy = document.getElementById("s-proxy").value.trim();
+          CFG.tmdb = document.getElementById("s-tmdb").value.trim();
+          saveCfg();
+          updateSrcHint();
+          closeSettings();
+          if (state.q) doSearch(state.q);
+          else if (ok.length)
+            setStatus("已保存 " + ok.length + " 个片源，在上面搜个片名试试。");
+        });
+
+        /* 导入：自动识别 JSON 或「每行一条」（支持 名称+地址 / 纯地址 / 逗号分隔） */
+        document.getElementById("s-imp").addEventListener("click", function () {
+          var raw = document.getElementById("s-json").value.trim();
+          var st = document.getElementById("s-status");
+          if (!raw) {
+            st.textContent = "先把源列表粘贴到文本框再导入。";
+            return;
+          }
+          var arr = null;
+          try {
+            var o = JSON.parse(raw);
+            arr = Array.isArray(o) ? o : o.sources || null;
+          } catch (e) {
+            arr = null;
+          }
+          if (!arr) {
+            arr = [];
+            raw.split(/\r?\n/).forEach(function (line) {
+              var s = line.trim();
+              if (!s || s.startsWith("#") || s.startsWith("//")) return;
+              var parts = s.split(/[\s,\t]+/);
+              if (parts.length >= 2 && /^https?:\/\//i.test(parts[parts.length - 1])) {
+                arr.push({
+                  name: parts.slice(0, parts.length - 1).join(" "),
+                  url: parts[parts.length - 1],
+                });
+              } else if (/^https?:\/\//i.test(s)) {
+                arr.push({ name: "", url: s });
+              }
+            });
+          }
+          if (!arr.length) {
+            st.textContent = "没解析出任何源。每行写一条地址，或粘贴 JSON 数组。";
+            return;
+          }
+          sList.innerHTML = "";
+          arr.forEach(addSrcRow);
+          st.textContent =
+            "已导入 " +
+            arr.length +
+            " 条，点「全部自检」立刻筛出哪些能用。";
+        });
+
+        document.getElementById("s-testall").addEventListener("click", testAll);
+
+        document.getElementById("s-exp").addEventListener("click", function () {
+          document.getElementById("s-json").value = JSON.stringify(CFG, null, 2);
+          document.getElementById("s-status").textContent = "已导出到文本框，可复制保存。";
+        });
+
+        document.getElementById("s-clear").addEventListener("click", function () {
+          CFG = { sources: [], proxy: "", tmdb: "" };
+          saveCfg();
+          sList.innerHTML = "";
+          addSrcRow({});
+          document.getElementById("s-proxy").value = "";
+          document.getElementById("s-tmdb").value = "";
+          real = [];
+          updateSrcHint();
+          render();
+          document.getElementById("s-status").textContent = "已清空，回到演示数据。";
+        });
+
+        updateSrcHint();
+      }
+
+      function updateSrcHint() {
+        var el = document.getElementById("hero-src");
+        if (!el) return;
+        var n = CFG.sources.length;
+        el.textContent = n
+          ? "已配置 " + n + " 个片源" + (CFG.proxy ? " · 已设代理" : "")
+          : "当前显示演示数据";
+      }
+
+      if (document.readyState === "loading")
+        document.addEventListener("DOMContentLoaded", setupSettings);
+      else setupSettings();
+
+      render();
+    </script>
+    <!-- ================= 片源设置 ================= -->
+    <div class="modal" id="smodal" role="dialog" aria-modal="true">
+      <div class="modal-box">
+        <div class="modal-head">
+          <div>
+            <h3>片源设置</h3>
+            <div class="sub">只保存在你自己的浏览器里，不会上传到任何服务器</div>
+          </div>
+          <button class="close" id="s-close" aria-label="关闭">×</button>
+        </div>
+        <div class="sbody">
+          <div class="srow">
+            <label>视频源（苹果 CMS 接口格式）</label>
+            <div id="s-list"></div>
+            <button class="btn btn-ghost btn-sm" id="s-add" style="border-color: oklch(42% 0.02 62); color: #fff">+ 添加片源</button>
+            <button class="btn btn-ghost btn-sm" id="s-demo" style="border-color: oklch(42% 0.02 62); color: #fff">填入本站演示源</button>
+            <div class="shint">
+              填接口的根地址即可，例如 <code style="color:#fff">https://api.example.com</code>，
+              页面会自动拼 <code style="color:#fff">/api.php/provide/vod/?ac=videolist&amp;wd=关键词</code>；
+              也可以直接填一个 <code style="color:#fff">.json</code> 静态文件的完整地址。
+              填完点右侧「自检」可以立刻验证它是否返回有效 JSON。
+            </div>
+          </div>
+          <div class="srow">
+            <label>代理前缀（可选，用来解决跨域）</label>
+            <input id="s-proxy" type="text" placeholder="https://你的域名/api/proxy?url=" />
+            <div class="shint">
+              留空则浏览器直连。多数片源不允许跨域访问，填一个代理即可（结尾要带
+              <code style="color: #fff">?url=</code>）。
+              不会搭？看
+              <a href="./proxy-guide.html" target="_blank" style="color: var(--accent)">跨域代理搭建指引</a>
+              （提供 Cloudflare Worker 与本地 Python 两版，复制即用）。
+            </div>
+          </div>
+          <div class="srow">
+            <label>TMDB Token（可选，补全海报与简介）</label>
+            <input id="s-tmdb" type="text" placeholder="留空则使用片源自带的海报" />
+          </div>
+          <div class="srow">
+            <label>批量导入 / 导出（每行一条，或 JSON 数组）</label>
+            <textarea id="s-json" placeholder="每行一条，例如：&#10;我的源 https://api.example.com&#10;备用源 https://api2.example.com&#10;也可以直接粘贴 [{"name":"x","url":"https://..."}]"></textarea>
+            <div class="sbtns">
+              <button id="s-imp">批量导入</button>
+              <button id="s-testall">全部自检</button>
+              <button id="s-exp">导出到文本框</button>
+              <button id="s-clear">清空全部</button>
+            </div>
+          </div>
+        </div>
+        <div class="sfoot">
+          <span id="s-status"></span>
+          <div>
+            <button class="btn btn-ghost btn-sm" id="s-cancel" style="border-color: oklch(42% 0.02 62); color: #fff">取消</button>
+            <button class="btn btn-accent btn-sm" id="s-save">保存</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@1/dist/hls.min.js"></script>
+  </body>
+</html>

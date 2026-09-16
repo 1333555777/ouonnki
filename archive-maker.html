@@ -1,0 +1,646 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>片源生成器 · 从 Internet Archive 一键生成 JSON</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1815'/%3E%3Cpath d='M12 9.5l11 6.5-11 6.5z' fill='%23c9402f'/%3E%3C/svg%3E"
+    />
+    <style>
+      :root {
+        --paper: oklch(97.4% 0.007 88);
+        --paper-2: oklch(99.2% 0.004 88);
+        --paper-3: oklch(95.6% 0.01 88);
+        --ink: oklch(21% 0.018 65);
+        --ink-2: oklch(38% 0.015 70);
+        --ink-3: oklch(56% 0.012 75);
+        --hair: oklch(87% 0.012 80);
+        --hair-2: oklch(79% 0.014 80);
+        --accent: oklch(53% 0.185 30);
+        --accent-soft: oklch(94.5% 0.03 32);
+        --ok: oklch(50% 0.1 152);
+        --font-display: "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+        --font-mono: ui-monospace, "Cascadia Mono", Consolas, monospace;
+        --pad: clamp(1.1rem, 4vw, 3rem);
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--paper);
+        color: var(--ink);
+        font-family: "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+        line-height: 1.7;
+      }
+      a {
+        color: var(--accent);
+      }
+      .wrap {
+        max-width: 960px;
+        margin-inline: auto;
+        padding-inline: var(--pad);
+      }
+      header.nav {
+        background: oklch(17% 0.018 60);
+        color: #fff;
+      }
+      .nav-inner {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        min-height: 58px;
+      }
+      .brand {
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        color: #fff;
+        text-decoration: none;
+      }
+      nav.links {
+        margin-left: auto;
+        display: flex;
+        gap: 1.1rem;
+        font-size: 0.85rem;
+      }
+      nav.links a {
+        color: oklch(76% 0.015 82);
+        text-decoration: none;
+      }
+      nav.links a:hover {
+        color: #fff;
+      }
+      h1 {
+        font-family: var(--font-display);
+        font-size: clamp(1.55rem, 4vw, 2.2rem);
+        letter-spacing: -0.03em;
+        font-weight: 800;
+        margin: 2rem 0 0.6rem;
+      }
+      h2 {
+        font-family: var(--font-display);
+        font-size: 1.15rem;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        margin: 2.4rem 0 0.8rem;
+        padding-top: 1.2rem;
+        border-top: 1px solid var(--hair);
+      }
+      p {
+        margin: 0 0 0.9rem;
+        color: var(--ink-2);
+        font-size: 0.92rem;
+      }
+      .card {
+        border: 1px solid var(--hair);
+        border-radius: 6px;
+        background: var(--paper-2);
+        padding: 1.15rem 1.25rem;
+      }
+      .form {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr));
+        gap: 0.85rem;
+        align-items: end;
+      }
+      label {
+        display: block;
+        font-size: 0.78rem;
+        color: var(--ink-2);
+        font-weight: 600;
+        margin-bottom: 0.35rem;
+      }
+      select,
+      input[type="text"],
+      input[type="number"] {
+        width: 100%;
+        font: inherit;
+        font-size: 0.88rem;
+        padding: 0.5rem 0.6rem;
+        border: 1px solid var(--hair-2);
+        border-radius: 4px;
+        background: var(--paper-2);
+        color: var(--ink);
+      }
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.62rem 1rem;
+        border-radius: 4px;
+        border: 1px solid var(--ink);
+        background: var(--ink);
+        color: var(--paper-2);
+        font: inherit;
+        font-size: 0.88rem;
+        font-weight: 600;
+        cursor: pointer;
+        text-decoration: none;
+      }
+      .btn:hover {
+        transform: translateY(-1px);
+      }
+      .btn-accent {
+        background: var(--accent);
+        border-color: var(--accent);
+        color: #fff;
+      }
+      .btn-ghost {
+        background: transparent;
+        color: var(--ink);
+        border-color: var(--hair-2);
+      }
+      .btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+      .check {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        font-size: 0.85rem;
+        color: var(--ink-2);
+      }
+      .bar {
+        height: 6px;
+        border-radius: 100px;
+        background: var(--paper-3);
+        border: 1px solid var(--hair);
+        overflow: hidden;
+        margin-top: 1rem;
+      }
+      .bar > i {
+        display: block;
+        height: 100%;
+        width: 0;
+        background: var(--accent);
+        transition: width 0.3s linear;
+      }
+      .status {
+        font-family: var(--font-mono);
+        font-size: 0.76rem;
+        color: var(--ink-3);
+        margin-top: 0.5rem;
+        min-height: 1.2em;
+      }
+      .status.err {
+        color: var(--accent);
+      }
+      .status.ok {
+        color: var(--ok);
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.82rem;
+        margin-top: 1rem;
+      }
+      th,
+      td {
+        text-align: left;
+        padding: 0.5rem 0.5rem;
+        border-bottom: 1px solid var(--hair);
+        vertical-align: middle;
+      }
+      th {
+        font-size: 0.74rem;
+        color: var(--ink-3);
+      }
+      td img {
+        width: 44px;
+        height: 62px;
+        object-fit: cover;
+        border-radius: 3px;
+        border: 1px solid var(--hair);
+      }
+      td.u {
+        max-width: 260px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        font-family: var(--font-mono);
+        font-size: 0.7rem;
+        color: var(--ink-3);
+      }
+      pre {
+        background: var(--paper-3);
+        border: 1px solid var(--hair);
+        border-radius: 5px;
+        padding: 0.8rem 0.9rem;
+        overflow-x: auto;
+        font-family: var(--font-mono);
+        font-size: 0.75rem;
+        line-height: 1.65;
+        color: var(--ink-2);
+      }
+      .tip {
+        border-left: 3px solid var(--accent);
+        background: var(--accent-soft);
+        padding: 0.7rem 1rem;
+        border-radius: 0 5px 5px 0;
+        font-size: 0.85rem;
+        color: var(--ink-2);
+        margin: 0.9rem 0;
+      }
+      ol.steps {
+        counter-reset: s;
+        list-style: none;
+        padding: 0;
+      }
+      ol.steps > li {
+        counter-increment: s;
+        position: relative;
+        padding-left: 2.4rem;
+        margin-bottom: 1.1rem;
+        font-size: 0.88rem;
+        color: var(--ink-2);
+      }
+      ol.steps > li::before {
+        content: counter(s);
+        position: absolute;
+        left: 0;
+        top: 0.1rem;
+        width: 1.6rem;
+        height: 1.6rem;
+        border-radius: 50%;
+        background: var(--accent-soft);
+        color: var(--accent);
+        font-family: var(--font-mono);
+        font-size: 0.72rem;
+        display: grid;
+        place-items: center;
+      }
+      footer {
+        margin-top: 3rem;
+        border-top: 1px solid var(--hair);
+        padding-block: 1.75rem 2.5rem;
+        font-size: 0.8rem;
+        color: var(--ink-3);
+      }
+    </style>
+  </head>
+  <body>
+    <header class="nav">
+      <div class="wrap nav-inner">
+        <a class="brand" href="./index.html">Ouonnki 影视</a>
+        <nav class="links">
+          <a href="./index.html">片库</a>
+          <a href="./proxy-guide.html">跨域代理</a>
+          <a href="./release-guide.html">发布指引</a>
+          <a href="./tools.html">工具箱</a>
+        </nav>
+      </div>
+    </header>
+
+    <div class="wrap">
+      <h1>片源生成器</h1>
+      <p>
+        从 Internet Archive 的<b>公有领域 / 知识共享</b>影视库直接生成片源 JSON。
+        整个跑在你的浏览器里：请求由你的浏览器发出，生成的 JSON 也只下载到你本机，不经过任何第三方服务器。
+      </p>
+
+      <div class="card">
+        <div class="form">
+          <div>
+            <label for="coll">集合</label>
+            <select id="coll">
+              <option value="feature_films">feature_films · 公有领域故事片</option>
+              <option value="silent_films">silent_films · 默片</option>
+              <option value="documentaries">documentaries · 纪录片</option>
+              <option value="opensource_movies">opensource_movies · 开源影片</option>
+              <option value="shortfilms">shortfilms · 短片</option>
+            </select>
+          </div>
+          <div>
+            <label for="kw">关键词（可选）</label>
+            <input type="text" id="kw" placeholder="留空则按下载量排序" />
+          </div>
+          <div>
+            <label for="n">目标条数</label>
+            <input type="number" id="n" value="20" min="1" max="100" />
+          </div>
+          <div>
+            <label class="check">
+              <input type="checkbox" id="verify" checked /> 校验播放地址
+            </label>
+          </div>
+          <div>
+            <button class="btn btn-accent" id="go">开始生成</button>
+          </div>
+        </div>
+        <div class="bar"><i id="bar"></i></div>
+        <div class="status" id="st"></div>
+      </div>
+
+      <div id="out" style="display: none">
+        <h2>生成结果</h2>
+        <div class="status ok" id="sum"></div>
+        <div style="display: flex; gap: 0.6rem; flex-wrap: wrap; margin-top: 0.9rem">
+          <button class="btn btn-accent" id="dl">下载 JSON</button>
+          <button class="btn btn-ghost" id="cp">复制 JSON</button>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th></th>
+              <th>标题</th>
+              <th>年份</th>
+              <th>类型</th>
+              <th>播放地址</th>
+            </tr>
+          </thead>
+          <tbody id="tb"></tbody>
+        </table>
+      </div>
+
+      <h2>怎么用生成的 JSON</h2>
+      <ol class="steps">
+        <li>点「下载 JSON」，把文件命名成 <code>source-demo.json</code>。</li>
+        <li>
+          用它替换站点目录里的同名文件（就是你现在访问地址下的
+          <code>/source-demo.json</code>），重新上传到 Cloudflare 即可。
+        </li>
+        <li>
+          也可以在片源设置里把它当成一个新源：把文件传到任意静态空间，
+          地址填 <code>https://你的域名/xxx.json</code>，然后「自检」。
+        </li>
+      </ol>
+
+      <h2>定时自动重抓（三种做法）</h2>
+
+      <p><b>① GitHub Actions（推荐，抓完自动更新站点）</b></p>
+      <p>
+        把生成器脚本放进仓库，用定时任务每天跑一次，抓完自动提交。若你的站点也是从该仓库部署的
+        （Cloudflare Pages / GitHub Pages），提交即生效，全自动。
+      </p>
+      <pre>
+# .github/workflows/archive-refresh.yml
+name: 定时重抓片源
+on:
+  schedule:
+    - cron: "17 3 * * *"   # 每天 UTC 03:17（北京时间 11:17）
+  workflow_dispatch:        # 也支持手动点一下
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: 生成片源
+        run: python build/build_archive_source.py --collection feature_films --limit 24
+      - name: 有变化就提交
+        run: |
+          git config user.name "bot"
+          git config user.email "bot@example.com"
+          git add site/source-demo.json site/archive-source.json
+          git diff --quiet --cached || git commit -m "chore: 自动重抓片源"
+          git push</pre
+      >
+
+      <p><b>② Windows 任务计划程序</b></p>
+      <p>管理员身份打开 PowerShell，执行一次即创建每天 11:00 自动运行的任务：</p>
+      <pre>
+$act = New-ScheduledTaskAction -Execute "python" `
+  -Argument "C:\path\to\build\build_archive_source.py --collection feature_films --limit 24" `
+  -WorkingDirectory "C:\path\to"
+$trg = New-ScheduledTaskTrigger -Daily -At 11:00
+Register-ScheduledTask -TaskName "OuonnkiTV-片源重抓" -Action $act -Trigger $trg -Description "每天重抓 Internet Archive 公有领域片源"</pre
+      >
+
+      <p><b>③ Linux / macOS cron</b></p>
+      <pre>
+# 每天 11:00 重抓，日志写到 refresh.log
+0 11 * * * cd /path/to/project && /usr/bin/python3 build/build_archive_source.py --collection feature_films --limit 24 >> refresh.log 2>&1</pre
+      >
+
+      <div class="tip">
+        提醒：重抓会按下载量重新排序，结果列表可能整体变化；脚本会自动跳过抓取失败的条目，
+        并过滤掉成人 / 剥削片关键词。想固定风格就指定关键词，例如
+        <code>--query "title:(chaplin)"</code> 只抓卓别林相关。
+      </div>
+
+      <h2>命令行用法</h2>
+      <pre>
+python build/build_archive_source.py                       # 默认抓 24 条
+python build/build_archive_source.py --collection silent_films --limit 12
+python build/build_archive_source.py --query 'title:(chaplin)' --limit 10
+python build/build_archive_source.py --no-verify            # 跳过实测，速度快很多</pre
+      >
+    </div>
+
+    <footer>
+      <div class="wrap">数据来源 Internet Archive · 仅收录公有领域 / CC 授权内容 · 生成过程全部在本地浏览器完成</div>
+    </footer>
+
+    <script>
+      "use strict";
+      var $ = function (s) {
+        return document.querySelector(s);
+      };
+      var st = $("#st");
+      var bar = $("#bar");
+      var BLOCK = ["sex", "sexy", "nudist", "nudity", "nude", "naked", "erotic", "erotica", "adult", "porn", "xxx", "fetish", "orgy", "strip"];
+      var VIDEO_EXT = [".mp4", ".m4v", ".ogv", ".webm"];
+      var VIDEO_FMT = ["MPEG4", "h.264", "H.264", "Ogg Video", "WebM", "h.264 IA"];
+      var MAX = 3 * 1024 * 1024 * 1024;
+      var result = [];
+
+      function setSt(msg, cls) {
+        st.textContent = msg || "";
+        st.className = "status" + (cls ? " " + cls : "");
+      }
+
+      function pickVideo(files) {
+        var best = null;
+        files.forEach(function (f) {
+          var n = f.name || "";
+          var okExt = VIDEO_EXT.some(function (e) {
+            return n.toLowerCase().endsWith(e);
+          });
+          if (!okExt) return;
+          if (f.format && VIDEO_FMT.indexOf(f.format) < 0) return;
+          var size = parseInt(f.size || "0", 10);
+          if (!size || size > MAX) return;
+          if (!best || size > best.size) best = { name: n, size: size };
+        });
+        return best;
+      }
+
+      async function jget(url) {
+        var r = await fetch(url);
+        if (!r.ok) throw new Error("HTTP " + r.status);
+        return r.json();
+      }
+
+      async function probe(url) {
+        try {
+          var r = await fetch(url, { headers: { Range: "bytes=0-1024" } });
+          return r.status === 200 || r.status === 206;
+        } catch (e) {
+          return false;
+        }
+      }
+
+      function blocked(doc) {
+        var hay = (
+          (doc.identifier || "") + " " + (doc.title || "") + " " + ((doc.subject || []).join ? (doc.subject || []).join(" ") : "")
+        ).toLowerCase();
+        return BLOCK.some(function (b) {
+          return hay.indexOf(b) > -1;
+        });
+      }
+
+      async function run() {
+        var coll = $("#coll").value;
+        var kw = $("#kw").value.trim();
+        var want = Math.max(1, Math.min(100, parseInt($("#n").value, 10) || 20));
+        var verify = $("#verify").checked;
+        var btn = $("#go");
+        btn.disabled = true;
+        result = [];
+        $("#out").style.display = "none";
+        bar.style.width = "0%";
+
+        try {
+          setSt("检索中…");
+          var q = "mediatype:movies AND collection:" + coll + (kw ? " AND (" + kw + ")" : "");
+          var url =
+            "https://archive.org/advancedsearch.php?q=" +
+            encodeURIComponent(q) +
+            "&fl[]=identifier&fl[]=title&fl[]=year&fl[]=subject&sort[]=downloads%20desc&rows=" +
+            Math.max(want * 4, 40) +
+            "&page=1&output=json";
+          var data = await jget(url);
+          var docs = (data.response && data.response.docs) || [];
+          if (!docs.length) {
+            setSt("这个条件下没有找到条目，换个集合或关键词试试。", "err");
+            btn.disabled = false;
+            return;
+          }
+          setSt("候选 " + docs.length + " 条，开始取播放地址…");
+
+          var done = 0;
+          for (var i = 0; i < docs.length && result.length < want; i++) {
+            var d = docs[i];
+            if (blocked(d)) continue;
+            done++;
+            bar.style.width = Math.round((done / Math.min(docs.length, want * 2)) * 100) + "%";
+            setSt("处理第 " + done + " 个：" + (d.title || d.identifier).slice(0, 24) + "（已收录 " + result.length + "）");
+            try {
+              var meta = await jget("https://archive.org/metadata/" + encodeURIComponent(d.identifier));
+            } catch (e) {
+              continue;
+            }
+            var f = pickVideo(meta.files || []);
+            if (!f) continue;
+            var playUrl =
+              "https://archive.org/download/" +
+              d.identifier +
+              "/" +
+              encodeURIComponent(f.name).replace(/%2F/g, "/");
+            if (verify && !(await probe(playUrl))) continue;
+            var md = meta.metadata || {};
+            var subs = md.subject || d.subject || [];
+            if (typeof subs === "string") subs = [subs];
+            result.push({
+              vod_id: d.identifier,
+              vod_name: (d.title || md.title || d.identifier).slice(0, 48),
+              type_name: ((subs[0] || "公有领域影片") + "").slice(0, 16),
+              vod_year: String(d.year || md.year || ""),
+              vod_remarks: "公有领域",
+              vod_pic: "https://archive.org/services/img/" + d.identifier,
+              vod_play_from: "default",
+              vod_play_url: "第1集$" + playUrl,
+              vod_content: (md.description || "来自 Internet Archive 的公有领域影片。").toString().slice(0, 280),
+            });
+          }
+
+          bar.style.width = "100%";
+          if (!result.length) {
+            setSt("没有拿到任何可播放条目，可能是该集合的视频格式不被浏览器支持。", "err");
+            btn.disabled = false;
+            return;
+          }
+          setSt("完成，共 " + result.length + " 条。", "ok");
+          render();
+        } catch (e) {
+          setSt("失败：" + (e.message || e) + "（多为网络不通或 archive.org 暂时不可用）", "err");
+        }
+        btn.disabled = false;
+      }
+
+      function render() {
+        $("#sum").textContent = "共 " + result.length + " 条，全部实测可播。";
+        $("#tb").innerHTML = result
+          .map(function (v) {
+            var u = v.vod_play_url.split("$")[1] || "";
+            return (
+              "<tr>" +
+              '<td><img src="' + v.vod_pic + '" alt="" loading="lazy" /></td>' +
+              "<td>" + v.vod_name + "</td>" +
+              "<td>" + v.vod_year + "</td>" +
+              "<td>" + v.type_name + "</td>" +
+              '<td class="u" title="' + u + '">' + u + "</td>" +
+              "</tr>"
+            );
+          })
+          .join("");
+        $("#out").style.display = "block";
+        $("#out").scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+
+      function payload() {
+        return {
+          code: 1,
+          msg: "Internet Archive 公有领域影视（浏览器生成）",
+          page: 1,
+          pagecount: 1,
+          limit: result.length,
+          total: result.length,
+          list: result,
+        };
+      }
+
+      $("#go").addEventListener("click", run);
+
+      $("#dl").addEventListener("click", function () {
+        var blob = new Blob([JSON.stringify(payload(), null, 1)], { type: "application/json" });
+        var a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = "source-demo.json";
+        a.click();
+        setTimeout(function () {
+          URL.revokeObjectURL(a.href);
+        }, 60000);
+      });
+
+      $("#cp").addEventListener("click", function () {
+        var text = JSON.stringify(payload(), null, 1);
+        var btn = $("#cp");
+        var done = function () {
+          btn.textContent = "已复制";
+          setTimeout(function () {
+            btn.textContent = "复制 JSON";
+          }, 1600);
+        };
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(done, done);
+        } else {
+          var ta = document.createElement("textarea");
+          ta.value = text;
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand("copy");
+          ta.remove();
+          done();
+        }
+      });
+    </script>
+  </body>
+</html>

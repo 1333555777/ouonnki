@@ -1,0 +1,54 @@
+{
+  "code": 1,
+  "msg": "我的版权内容（示例模板，改完即可用）",
+  "page": 1,
+  "pagecount": 1,
+  "limit": 50,
+  "total": 4,
+  "list": [
+    {
+      "vod_id": "1",
+      "vod_name": "我的电影（完整版）",
+      "type_name": "电影",
+      "vod_year": "2024",
+      "vod_remarks": "已授权",
+      "vod_pic": "https://你的图床.com/poster.jpg",
+      "vod_play_from": "default",
+      "vod_play_url": "正片$https://你的视频域名.com/电影.mp4",
+      "vod_content": "影片简介写这里"
+    },
+    {
+      "vod_id": "2",
+      "vod_name": "我的剧集",
+      "type_name": "剧集",
+      "vod_year": "2024",
+      "vod_remarks": "12集",
+      "vod_pic": "",
+      "vod_play_from": "default",
+      "vod_play_url": "第1集$https://你的视频域名.com/e1.mp4#第2集$https://你的视频域名.com/e2.mp4#第3集$https://你的视频域名.com/e3.mp4",
+      "vod_content": "多集用 # 分隔"
+    },
+    {
+      "vod_id": "3",
+      "vod_name": "HLS 切片版（大文件推荐）",
+      "type_name": "电影",
+      "vod_year": "2024",
+      "vod_remarks": "HLS",
+      "vod_pic": "",
+      "vod_play_from": "m3u8",
+      "vod_play_url": "正片$https://你的视频域名.com/index.m3u8",
+      "vod_content": "vod_play_from 填 m3u8 即走 HLS 播放器"
+    },
+    {
+      "vod_id": "4",
+      "vod_name": "多清晰度（双线路）",
+      "type_name": "电影",
+      "vod_year": "2024",
+      "vod_remarks": "1080P / 720P",
+      "vod_pic": "",
+      "vod_play_from": "1080P$$$720P",
+      "vod_play_url": "正片$https://你的视频域名.com/1080p.mp4#第2集$https://你的视频域名.com/1080p_e2.mp4$$$正片$https://你的视频域名.com/720p.mp4#第2集$https://你的视频域名.com/720p_e2.mp4",
+      "vod_content": "多组用 $$$ 分隔，每组内集数用 # 分隔，单集写 集名$地址"
+    }
+  ]
+}

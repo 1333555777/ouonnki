@@ -1,0 +1,456 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>跨域代理搭建指引 · Ouonnki 影视</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1815'/%3E%3Cpath d='M12 9.5l11 6.5-11 6.5z' fill='%23c9402f'/%3E%3C/svg%3E"
+    />
+    <style>
+      :root {
+        --paper: oklch(97.4% 0.007 88);
+        --paper-2: oklch(99.2% 0.004 88);
+        --paper-3: oklch(95.6% 0.01 88);
+        --ink: oklch(21% 0.018 65);
+        --ink-2: oklch(38% 0.015 70);
+        --ink-3: oklch(56% 0.012 75);
+        --hair: oklch(87% 0.012 80);
+        --hair-2: oklch(79% 0.014 80);
+        --accent: oklch(53% 0.185 30);
+        --accent-soft: oklch(94.5% 0.03 32);
+        --font-display: "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+        --font-mono: ui-monospace, "Cascadia Mono", Consolas, monospace;
+        --pad: clamp(1.1rem, 4vw, 3rem);
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--paper);
+        color: var(--ink);
+        font-family: "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+        line-height: 1.7;
+      }
+      a {
+        color: var(--accent);
+      }
+      .wrap {
+        max-width: 920px;
+        margin-inline: auto;
+        padding-inline: var(--pad);
+      }
+      header.nav {
+        background: oklch(17% 0.018 60);
+        color: #fff;
+      }
+      .nav-inner {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        min-height: 58px;
+      }
+      .brand {
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        color: #fff;
+        text-decoration: none;
+      }
+      .nav-inner nav {
+        margin-left: auto;
+        display: flex;
+        gap: 1.1rem;
+        font-size: 0.85rem;
+      }
+      .nav-inner nav a {
+        color: oklch(76% 0.015 82);
+        text-decoration: none;
+      }
+      .nav-inner nav a:hover {
+        color: #fff;
+      }
+      h1 {
+        font-family: var(--font-display);
+        font-size: clamp(1.6rem, 4vw, 2.3rem);
+        letter-spacing: -0.03em;
+        font-weight: 800;
+        margin: 2rem 0 0.6rem;
+      }
+      h2 {
+        font-family: var(--font-display);
+        font-size: 1.2rem;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        margin: 2.5rem 0 0.9rem;
+        padding-top: 1.2rem;
+        border-top: 1px solid var(--hair);
+      }
+      p {
+        margin: 0 0 0.9rem;
+        color: var(--ink-2);
+        font-size: 0.92rem;
+      }
+      .lede {
+        font-size: 1rem;
+        color: var(--ink-2);
+        margin-bottom: 1.5rem;
+      }
+      ol.steps {
+        counter-reset: s;
+        list-style: none;
+        padding: 0;
+        margin: 1rem 0 0;
+      }
+      ol.steps > li {
+        counter-increment: s;
+        position: relative;
+        padding-left: 2.6rem;
+        margin-bottom: 1.4rem;
+      }
+      ol.steps > li::before {
+        content: counter(s);
+        position: absolute;
+        left: 0;
+        top: 0.1rem;
+        width: 1.75rem;
+        height: 1.75rem;
+        border-radius: 50%;
+        background: var(--accent-soft);
+        color: var(--accent);
+        font-family: var(--font-mono);
+        font-size: 0.8rem;
+        display: grid;
+        place-items: center;
+      }
+      .shot {
+        border: 1px solid var(--hair);
+        border-radius: 6px;
+        background: var(--paper-2);
+        padding: 0.9rem 1rem;
+        margin-top: 0.7rem;
+        font-size: 0.85rem;
+      }
+      .shot .bar {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding-bottom: 0.6rem;
+        border-bottom: 1px solid var(--hair);
+        margin-bottom: 0.7rem;
+        font-family: var(--font-mono);
+        font-size: 0.68rem;
+        color: var(--ink-3);
+      }
+      .shot .dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--hair-2);
+      }
+      .shot .row {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        padding: 0.4rem 0.6rem;
+        border-radius: 4px;
+        color: var(--ink-2);
+        font-size: 0.83rem;
+      }
+      .shot .row.hl {
+        background: var(--accent-soft);
+        color: var(--ink);
+        font-weight: 600;
+        box-shadow: inset 0 0 0 1px oklch(84% 0.06 30);
+      }
+      .shot .kbd {
+        margin-left: auto;
+        font-family: var(--font-mono);
+        font-size: 0.72rem;
+        border: 1px solid var(--hair-2);
+        border-radius: 3px;
+        padding: 0.1rem 0.4rem;
+        background: var(--paper-2);
+      }
+      .tip,
+      .warn {
+        padding: 0.75rem 1rem;
+        border-radius: 0 5px 5px 0;
+        font-size: 0.85rem;
+        color: var(--ink-2);
+        margin: 0.9rem 0;
+      }
+      .tip {
+        border-left: 3px solid var(--accent);
+        background: var(--accent-soft);
+      }
+      .warn {
+        border-left: 3px solid oklch(70% 0.15 60);
+        background: oklch(96% 0.03 70);
+      }
+      code {
+        font-family: var(--font-mono);
+        font-size: 0.76rem;
+        background: var(--paper-3);
+        border: 1px solid var(--hair);
+        border-radius: 3px;
+        padding: 0.08rem 0.32rem;
+        word-break: break-all;
+      }
+      .code-wrap {
+        position: relative;
+        margin-top: 0.8rem;
+      }
+      pre {
+        background: oklch(20% 0.015 60);
+        color: oklch(88% 0.01 85);
+        border-radius: 6px;
+        padding: 0.9rem 1rem;
+        overflow-x: auto;
+        font-family: var(--font-mono);
+        font-size: 0.75rem;
+        line-height: 1.65;
+        max-height: 340px;
+        overflow-y: auto;
+      }
+      .copy {
+        position: absolute;
+        top: 0.6rem;
+        right: 0.6rem;
+        border: 1px solid oklch(45% 0.02 62);
+        background: oklch(28% 0.02 60);
+        color: #fff;
+        border-radius: 4px;
+        padding: 0.28rem 0.65rem;
+        font-size: 0.74rem;
+        cursor: pointer;
+      }
+      .copy:hover {
+        border-color: var(--accent);
+      }
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.55rem 0.95rem;
+        border-radius: 4px;
+        background: var(--accent);
+        color: #fff;
+        font-size: 0.85rem;
+        font-weight: 600;
+        text-decoration: none;
+      }
+      .btn.ghost {
+        background: transparent;
+        color: var(--ink);
+        border: 1px solid var(--hair-2);
+      }
+      .btnrow {
+        display: flex;
+        gap: 0.6rem;
+        flex-wrap: wrap;
+        margin-top: 0.9rem;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.84rem;
+        margin-top: 0.8rem;
+      }
+      th,
+      td {
+        text-align: left;
+        padding: 0.55rem 0.6rem;
+        border-bottom: 1px solid var(--hair);
+        vertical-align: top;
+      }
+      th {
+        font-size: 0.78rem;
+        color: var(--ink-3);
+        font-weight: 600;
+      }
+      footer {
+        margin-top: 3rem;
+        border-top: 1px solid var(--hair);
+        padding-block: 1.75rem 2.5rem;
+        font-size: 0.8rem;
+        color: var(--ink-3);
+      }
+    </style>
+  </head>
+  <body>
+    <header class="nav">
+      <div class="wrap nav-inner">
+        <a class="brand" href="./index.html">Ouonnki 影视</a>
+        <nav>
+          <a href="./index.html">片库</a>
+          <a href="./index.html#clients">三端下载</a>
+          <a href="./release-guide.html">发布指引</a>
+          <a href="./tools.html">工具箱</a>
+        </nav>
+      </div>
+    </header>
+
+    <div class="wrap">
+      <h1>跨域代理搭建指引</h1>
+      <p class="lede">
+        多数片源接口不允许浏览器直接跨域访问（CORS）。搭一个自己的代理后，
+        把地址填进站点的「片源设置 → 代理前缀」，就能直连任意源。
+        下面两个方案挑一个：<b>Cloudflare Worker</b>（长期在线，免费）或<b>本地 Python 代理</b>（不用注册任何账号）。
+      </p>
+
+      <h2>为什么需要它</h2>
+      <p>
+        浏览器有一条同源策略：网页只能请求同源的接口。你填的片源是别人的域名，
+        直接请求会被拦下来（控制台里能看到 <code>CORS policy</code> 报错）。
+        代理做的事很简单：替你去取数据，然后加上允许跨域的响应头再交给页面。
+      </p>
+      <p>
+        本代理还多做了两件对播放很关键的事：<b>透传 Range 请求</b>（否则视频不能拖动进度条）、
+        <b>改写 m3u8 里的分片地址</b>（否则只有第一层能过代理，分片还是会跨域失败）。
+      </p>
+
+      <h2 id="worker">方案 A · Cloudflare Worker（推荐）</h2>
+      <ol class="steps">
+        <li>
+          <strong>新建一个 Worker</strong><br />
+          登录 Cloudflare → <b>Workers &amp; Pages → Create → Worker → Start with Hello World! → Deploy</b>，
+          先随便起个名字，例如 <code>ouonnki-proxy</code>。
+          <div class="shot">
+            <div class="bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span> Workers &amp; Pages</div>
+            <div class="row">Overview · Logs · <span style="color: var(--accent)">Quick Edit</span></div>
+            <div class="row hl">
+              <span>点右上角 <b>Quick Edit</b>（或 Edit Code）</span><span class="kbd">进入编辑器</span>
+            </div>
+          </div>
+        </li>
+        <li>
+          <strong>粘贴代码</strong><br />
+          把编辑器里原来的内容<b>全选删掉</b>，粘贴下面这份（点右上角「复制代码」）：
+          <div class="code-wrap">
+            <button class="copy" data-target="worker-code">复制代码</button>
+            <pre id="worker-code">// 加载中…</pre>
+          </div>
+          <div class="btnrow">
+            <a class="btn ghost" href="./download/proxy-worker.js" download>直接下载 proxy-worker.js</a>
+          </div>
+        </li>
+        <li>
+          <strong>部署</strong><br />
+          点右上角 <b>Save and Deploy</b>。
+        </li>
+        <li>
+          <strong>拿到地址并填进站点</strong><br />
+          部署成功后会显示 <code>https://ouonnki-proxy.你的账号.workers.dev</code>。
+          回到影视站点 → 右上角<b>片源设置</b> → <b>代理前缀</b> 填：
+          <pre>https://ouonnki-proxy.你的账号.workers.dev/?url=</pre>
+          <div class="warn">
+            结尾的 <code>?url=</code> <b>必须带</b>，而且要是英文问号。填错会变成「拼出来的地址 404」。
+          </div>
+        </li>
+        <li>
+          <strong>（强烈建议）加域名白名单</strong><br />
+          Worker 页面 → <b>Settings → Variables → Add variable</b>，名字填
+          <code>ALLOWED_HOSTS</code>，值填你自己的片源域名，多个用英文逗号分隔：
+          <pre>a.com,b.com</pre>
+          留空表示不限制——那样任何人都能拿你的 Worker 当公开代理，流量会被薅。
+        </li>
+      </ol>
+
+      <h2 id="local">方案 B · 本地 Python 代理（不用注册）</h2>
+      <p>只想在本机试试、或者暂时不想用 Cloudflare，用这个。只需要装了 Python 3。</p>
+      <ol class="steps">
+        <li>
+          下载
+          <a href="./download/proxy_local.py" download>proxy_local.py</a>，
+          放到任意文件夹。
+        </li>
+        <li>
+          在该文件夹打开命令行，执行：
+          <pre>python proxy_local.py
+# 或指定端口：python proxy_local.py 9000</pre>
+        </li>
+        <li>
+          看到提示后，在站点「片源设置 → 代理前缀」填：
+          <pre>http://127.0.0.1:8787/?url=</pre>
+        </li>
+      </ol>
+      <div class="tip">
+        这个脚本只监听 <code>127.0.0.1</code>，外网访问不到；关掉窗口就停止。
+        注意它<b>不能代理本机地址</b>（脚本里做了内网拦截，防止被当成攻击跳板），
+        所以它只适合代理公网上的片源。
+      </div>
+
+      <h2>自检：确认代理真的通了</h2>
+      <p>把地址换成你自己的，在浏览器里打开，应该看到一段 JSON：</p>
+      <pre>https://ouonnki-proxy.你的账号.workers.dev/</pre>
+      <p>用命令行测真实转发（返回一堆 m3u8 文本，且里面的地址都变成你的代理地址，就说明改写生效了）：</p>
+      <pre>curl "https://ouonnki-proxy.你的账号.workers.dev/?url=https%3A%2F%2Ftest-streams.mux.dev%2Fx36xhzz%2Fx36xhzz.m3u8"</pre>
+
+      <h2>常见问题</h2>
+      <p>
+        <b>填了还是搜不到？</b>先确认代理前缀以 <code>?url=</code> 结尾；再确认片源地址本身在浏览器里能打开。
+        设置里保存后，页面会用「代理前缀 + 编码后的片源地址」重新发起请求。
+      </p>
+      <p>
+        <b>能搜索但播放不了？</b>通常是 m3u8 的分片没走代理。本代理已自动改写；
+        如果你的源用了 AES-128 加密，密钥地址（<code>URI=""</code>）也会被一起改写。
+      </p>
+      <p>
+        <b>提示 403 域名不在白名单？</b>把该片源域名加进 <code>ALLOWED_HOSTS</code>，
+        只填主域名即可（填 <code>a.com</code> 会同时放行 <code>www.a.com</code>）。
+      </p>
+      <p>
+        <b>会被别人滥用吗？</b>设置了白名单就不会。脚本还内置了内网地址拦截
+        （127.x / 10.x / 192.168.x / 169.254.x 等一律拒绝），不会被当成内网扫描跳板。
+      </p>
+    </div>
+
+    <footer>
+      <div class="wrap">OuonnkiTV · Apache License 2.0 · 代理只做转发，不缓存、不存储任何内容</div>
+    </footer>
+
+    <script>
+      // 把 worker 源码读进来显示，保证页面上的代码与实际文件始终一致
+      fetch("./download/proxy-worker.js")
+        .then(function (r) {
+          if (!r.ok) throw new Error("HTTP " + r.status);
+          return r.text();
+        })
+        .then(function (t) {
+          document.getElementById("worker-code").textContent = t;
+        })
+        .catch(function () {
+          document.getElementById("worker-code").textContent =
+            "源码加载失败，请直接下载 proxy-worker.js 查看。";
+        });
+
+      document.addEventListener("click", function (e) {
+        var b = e.target.closest ? e.target.closest(".copy") : null;
+        if (!b) return;
+        var pre = document.getElementById(b.getAttribute("data-target"));
+        if (!pre) return;
+        var text = pre.textContent;
+        var done = function () {
+          var old = b.textContent;
+          b.textContent = "已复制";
+          setTimeout(function () {
+            b.textContent = old;
+          }, 1600);
+        };
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(done, done);
+        } else {
+          var ta = document.createElement("textarea");
+          ta.value = text;
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand("copy");
+          ta.remove();
+          done();
+        }
+      });
+    </script>
+  </body>
+</html>

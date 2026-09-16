@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>如何接入自有版权片源 · OuonnkiTV</title>
+<style>
+  :root{
+    --paper: oklch(97.4% 0.007 88);
+    --paper-2: oklch(99.2% 0.004 88);
+    --stage: oklch(17% 0.018 60);
+    --ink: oklch(21% 0.018 65);
+    --ink-2: oklch(38% 0.015 70);
+    --ink-3: oklch(56% 0.012 75);
+    --accent: oklch(53% 0.185 30);
+    --hair: oklch(87% 0.012 80);
+    --font: "PingFang SC","HarmonyOS Sans SC","Microsoft YaHei","Noto Sans SC",system-ui,sans-serif;
+    --mono: ui-monospace,"SFMono-Regular","Cascadia Mono",Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:var(--font);color:var(--ink);background:var(--paper);line-height:1.7}
+  .wrap{max-width:880px;margin:0 auto;padding:clamp(1.2rem,4vw,3rem)}
+  h1{font-size:clamp(1.6rem,5vw,2.4rem);margin:0 0 .3rem;letter-spacing:-.02em}
+  h2{margin:2.6rem 0 .8rem;font-size:1.35rem;border-left:4px solid var(--accent);padding-left:.6rem}
+  h3{margin:1.4rem 0 .5rem;font-size:1.05rem}
+  p{color:var(--ink-2)}
+  a{color:var(--accent)}
+  code{font-family:var(--mono);background:oklch(94% 0.01 80);padding:.1em .35em;border-radius:5px;font-size:.9em}
+  .sub{color:var(--ink-3);margin:0 0 1.5rem}
+  .card{background:var(--paper-2);border:1px solid var(--hair);border-radius:14px;padding:1.1rem 1.25rem;margin:1rem 0;box-shadow:0 1px 2px rgba(0,0,0,.03)}
+  .nav{position:sticky;top:0;background:var(--paper);border-bottom:1px solid var(--hair);padding:.6rem 0;z-index:5}
+  .nav a{margin-right:1rem;font-size:.9rem;text-decoration:none;color:var(--ink-2)}
+  .nav a:hover{color:var(--accent)}
+  /* 流程图 */
+  .flow{display:flex;flex-wrap:wrap;gap:.6rem;align-items:stretch;margin:1.2rem 0}
+  .flow .node{flex:1 1 120px;background:var(--stage);color:#fff;border-radius:12px;padding:.9rem .8rem;text-align:center;font-size:.92rem;position:relative}
+  .flow .node small{display:block;opacity:.7;font-size:.74rem;margin-top:.25rem}
+  .flow .arrow{display:flex;align-items:center;color:var(--accent);font-size:1.4rem}
+  /* 表格 */
+  table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:.92rem}
+  th,td{border:1px solid var(--hair);padding:.55rem .7rem;text-align:left;vertical-align:top}
+  th{background:oklch(95% 0.01 80);color:var(--ink)}
+  /* 代码块 */
+  pre{position:relative;background:var(--stage);color:#f2efe9;border-radius:12px;padding:1rem 1.1rem;overflow:auto;font-family:var(--mono);font-size:.82rem;line-height:1.55;margin:.6rem 0}
+  pre .k{color:#f0a58c}
+  .copy{position:absolute;top:.5rem;right:.5rem;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);color:#fff;border-radius:8px;padding:.25rem .6rem;font-size:.78rem;cursor:pointer}
+  .copy:active{transform:translateY(1px)}
+  .grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:.8rem}
+  .pill{display:inline-block;background:var(--accent-soft,oklch(94.5% 0.03 32));color:var(--accent);border-radius:999px;padding:.15rem .7rem;font-size:.82rem;font-weight:600;margin:.15rem .2rem .15rem 0}
+  .warn{background:#fff7ed;border:1px solid #fed7aa;color:#9a3412;border-radius:12px;padding:.9rem 1.1rem;margin:1rem 0}
+  .ok{background:#f0fdf4;border:1px solid #bbf7d0;color:#166534;border-radius:12px;padding:.9rem 1.1rem;margin:1rem 0}
+  ol.steps{padding-left:1.2rem}
+  ol.steps li{margin:.5rem 0}
+  .back{display:inline-block;margin-top:2rem;color:var(--accent);text-decoration:none;font-weight:600}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>如何把自有版权视频接入 OuonnkiTV</h1>
+  <p class="sub">只接你自己有权利分发的视频（已购、自制、公版/CC、已授权）。三步：托管文件 → 写片源 JSON → 站点设置里填地址。</p>
+
+  <div class="nav">
+    <a href="#flow">总览</a>
+    <a href="#step1">① 托管文件</a>
+    <a href="#step2">② 写 JSON</a>
+    <a href="#step3">③ 接进设置</a>
+    <a href="#pit">常见坑</a>
+  </div>
+
+  <h2 id="flow">总览</h2>
+  <div class="flow">
+    <div class="node">你的视频文件<small>mp4 / m3u8 等</small></div>
+    <div class="arrow">→</div>
+    <div class="node">托管处<small>支持 Range + CORS</small></div>
+    <div class="arrow">→</div>
+    <div class="node">片源 JSON<small>描述文件</small></div>
+    <div class="arrow">→</div>
+    <div class="node">站点设置<small>填 JSON 地址</small></div>
+    <div class="arrow">→</div>
+    <div class="node">播放<small>三端可用</small></div>
+  </div>
+  <p>视频能不能拖进度条、能不能跨域播放，取决于<strong>托管处</strong>，与播放器无关。下面每步都给可直接复制的命令。</p>
+
+  <h2 id="step1">① 把视频文件放到能直链的地方</h2>
+  <p>浏览器直接拉视频，托管处必须同时满足两点：</p>
+  <table>
+    <tr><th>要求</th><th>为什么</th><th>怎么满足</th></tr>
+    <tr><td><strong>支持 Range 请求</strong></td><td>拖动进度条必需，否则只能从头播</td><td>对象存储 / CDN / 正规服务器都支持。<strong>家庭宽带直接暴露不行</strong>（无公网 IP、运营商封 80/443）</td></tr>
+    <tr><td><strong>允许 CORS 跨域</strong></td><td>片源域名 ≠ 站点域名时会拦截</td><td>托管处加响应头 <code>Access-Control-Allow-Origin: *</code>；懒得配就走第③步的「代理前缀」兜底</td></tr>
+  </table>
+
+  <h3>三种托管（按省事程度）</h3>
+  <div class="grid3">
+    <div class="card"><strong>对象存储</strong><p class="sub" style="margin:.4rem 0">阿里云 OSS / 腾讯云 COS / Cloudflare R2。原生支持 Range，控制台可一键开 CORS。最省心。</p></div>
+    <div class="card"><strong>自有 NAS / 服务器</strong><p class="sub" style="margin:.4rem 0">nginx 开目录 + 加 CORS 头即可。需有公网可达地址。</p></div>
+    <div class="card"><strong>网盘直链</strong><p class="sub" style="margin:.4rem 0">能拿到<strong>稳定直链</strong>（直接返回视频字节）才行，临时链接会失效。</p></div>
+  </div>
+
+  <h3>大文件（&gt;1–2GB）建议切成 HLS</h3>
+  <p>单文件 MP4 只要支持 Range 也能播；但大文件切片成 <code>.m3u8</code> 后加载更快、自适应码率。本地装好 ffmpeg 后一条命令：</p>
+  <pre id="c1"><button class="copy" data-t="c1">复制</button>ffmpeg -i 电影.mp4 -c:v h264 -c:a aac -hls_time 10 -hls_list_size 0 -f hls index.m3u8
+<span class="k"># 产出 index.m3u8 + 一堆 .ts，一起上传；片源里 vod_play_from 填 m3u8</span></pre>
+
+  <h2 id="step2">② 写一份片源 JSON</h2>
+  <p>每个视频一个条目。用到的字段：</p>
+  <table>
+    <tr><th>字段</th><th>含义</th></tr>
+    <tr><td><code>vod_name</code></td><td>标题</td></tr>
+    <tr><td><code>vod_pic</code></td><td>海报图地址（可空）</td></tr>
+    <tr><td><code>vod_content</code></td><td>简介（可空）</td></tr>
+    <tr><td><code>type_name</code></td><td>分类：电影 / 剧集 / 纪录片…</td></tr>
+    <tr><td><code>vod_play_from</code></td><td>线路/清晰度名。多组用 <code>$$$</code> 分隔；m3u8 填 <code>m3u8</code></td></tr>
+    <tr><td><code>vod_play_url</code></td><td>播放地址。<b>集与集用 <code>#</code> 分隔，单集写 <code>集名$地址</code></b></td></tr>
+  </table>
+
+  <div class="ok">分隔符速记：一份文件里 <code>组</code> 用 <code>$$$</code> 隔、<code>集</code> 用 <code>#</code> 隔、<code>集名和地址</code> 用 <code>$</code> 隔。</div>
+
+  <p><strong>可直接复制的模板</strong>（把地址换成你自己的）：</p>
+  <pre id="c2"><button class="copy" data-t="c2">复制</button>{
+  "code": 1,
+  "msg": "我的版权内容",
+  "page": 1, "pagecount": 1, "limit": 50, "total": 3,
+  "list": [
+    {
+      "vod_id": "1",
+      "vod_name": "我的电影（完整版）",
+      "type_name": "电影",
+      "vod_year": "2024",
+      "vod_remarks": "已授权",
+      "vod_pic": "https://你的图床.com/poster.jpg",
+      "vod_play_from": "default",
+      "vod_play_url": "正片$https://你的视频域名.com/电影.mp4",
+      "vod_content": "简介"
+    },
+    {
+      "vod_id": "2",
+      "vod_name": "我的剧集",
+      "type_name": "剧集",
+      "vod_year": "2024",
+      "vod_remarks": "多集",
+      "vod_pic": "",
+      "vod_play_from": "default",
+      "vod_play_url": "第1集$https://你的视频域名.com/e1.mp4#第2集$https://你的视频域名.com/e2.mp4",
+      "vod_content": "多集用 # 分隔"
+    },
+    {
+      "vod_id": "3",
+      "vod_name": "HLS 切片版",
+      "type_name": "电影",
+      "vod_year": "2024",
+      "vod_remarks": "HLS",
+      "vod_pic": "",
+      "vod_play_from": "m3u8",
+      "vod_play_url": "正片$https://你的视频域名.com/index.m3u8",
+      "vod_content": "vod_play_from 填 m3u8 即走 HLS 播放器"
+    }
+  ]
+}</pre>
+
+  <h3>不想手敲？用扫描脚本</h3>
+  <p>本地有一堆视频文件时，用仓库里的脚本一键生成（标题/分类从文件名自动推断，多集自动合并）：</p>
+  <pre id="c3"><button class="copy" data-t="c3">复制</button>python build/make_source_from_folder.py \
+  --dir "D:/影片" \
+  --prefix "https://cdn.example.com/movies/" \
+  --out site/my-source.json \
+  --cat 电影 --year 2024</pre>
+
+  <h2 id="step3">③ 在站点设置里接上</h2>
+  <ol class="steps">
+    <li>打开 OuonnkiTV → 右上角「设置」</li>
+    <li>视频源区域点「<strong>+ 添加片源</strong>」</li>
+    <li>名称随意；URL 填<strong>第②步那个 <code>.json</code> 的完整地址</strong>（以 <code>.json</code> 结尾，页面会当静态文件直读，不再拼接口路径）</li>
+    <li>点该行右侧「<strong>自检</strong>」，应显示「返回 N 条，含播放地址 N 条」</li>
+    <li>保存 → 回片库搜索/浏览即可播放</li>
+  </ol>
+
+  <div class="warn">若播放器报<strong>跨域</strong>（CORS），在设置里填「代理前缀」兜底（就是配套做的那个 Worker / Python 代理）：
+  <pre id="c4" style="margin-top:.6rem"><button class="copy" data-t="c4">复制</button># Cloudflare Worker 版（推荐）
+https://你的worker子域.workers.dev/?url=
+
+# 本地 Python 代理版
+http://127.0.0.1:8787/?url=
+<span class="k"># 注意结尾的 ?url= 必须带，漏了拼出来就是 404</span></pre>
+  </div>
+
+  <h2 id="pit">常见坑</h2>
+  <ul>
+    <li><strong>片源地址必须是视频直链</strong>（直接返回视频字节），不是网页。自检「返回了但没播放地址」通常是把网页链接当成了视频地址。</li>
+    <li><strong>静态 JSON 没有服务端搜索</strong>：搜什么都会返回全部，这是性质不是 bug。想按关键词筛就接苹果 CMS 接口（填接口根地址，<em>不带</em> <code>.json</code>，页面自动拼 <code>/api.php/provide/vod/?ac=videolist&amp;wd=</code>）。</li>
+    <li>地址里的空格、中文会被自动转义成 <code>%20</code> / <code>%xx</code>，正常，不用手改。</li>
+    <li>对象存储默认可能不开 CORS，控制台搜「跨域」加一条 <code>Access-Control-Allow-Origin: *</code> 即可。</li>
+  </ul>
+
+  <a class="back" href="./index.html">← 返回 OuonnkiTV 主页</a>
+</div>
+
+<script>
+  document.querySelectorAll(".copy").forEach(function(btn){
+    btn.addEventListener("click", function(){
+      var el = document.getElementById(btn.getAttribute("data-t"));
+      var txt = el.innerText.replace(/^复制\s*/, "");
+      var done = function(){ var o=btn.textContent; btn.textContent="已复制"; setTimeout(function(){btn.textContent=o;},1200); };
+      if(navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(txt).then(done, fallback);
+      } else { fallback(); }
+      function fallback(){
+        var ta=document.createElement("textarea"); ta.value=txt;
+        document.body.appendChild(ta); ta.select();
+        try{ document.execCommand("copy"); done(); }catch(e){}
+        document.body.removeChild(ta);
+      }
+    });
+  });
+</script>
+</body>
+</html>

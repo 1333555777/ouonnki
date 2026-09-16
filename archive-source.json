@@ -1,0 +1,43 @@
+{
+ "code": 1,
+ "msg": "Internet Archive 公有领域影视（自动生成）",
+ "page": 1,
+ "pagecount": 1,
+ "limit": 3,
+ "total": 3,
+ "list": [
+  {
+   "vod_id": "ThePhantomoftheOpera",
+   "vod_name": "The Phantom of the Opera",
+   "type_name": "silent; drama; h",
+   "vod_year": "1925",
+   "vod_remarks": "公有领域",
+   "vod_pic": "https://archive.org/services/img/ThePhantomoftheOpera",
+   "vod_play_from": "default",
+   "vod_play_url": "第1集$https://archive.org/download/ThePhantomoftheOpera/Phantom_of_the_Opera.ogv",
+   "vod_content": "At the Opera of Paris, a mysterious phantom threatens a famous lyric singer, Carlotta and thus forces her to give up her role (Marguerite in Faust) for unknown Christine Daae.  Christine meets this phantom (a masked man) in the catacombs, where he lives."
+  },
+  {
+   "vod_id": "20000LeaguesUndertheSea",
+   "vod_name": "20,000 Leagues Under the Sea",
+   "type_name": "Silent; Drama",
+   "vod_year": "1916",
+   "vod_remarks": "公有领域",
+   "vod_pic": "https://archive.org/services/img/20000LeaguesUndertheSea",
+   "vod_play_from": "default",
+   "vod_play_url": "第1集$https://archive.org/download/20000LeaguesUndertheSea/20000_Leagues_Under_the_Sea.ogv",
+   "vod_content": "The Universal Film Manufacturing Company was not known in the silent era as premier producer of motion pictures.  Yet, in 1916 they produced a film that could not be made effectively without expensive special effects and special photography.  The novel had previously been made as short films in 1907"
+  },
+  {
+   "vod_id": "DasKabinettdesDoktorCaligariTheCabinetofDrCaligari",
+   "vod_name": "Das Kabinett des Doktor Caligari ( The Cabinet o",
+   "type_name": "Silent; Fantasy;",
+   "vod_year": "1919",
+   "vod_remarks": "公有领域",
+   "vod_pic": "https://archive.org/services/img/DasKabinettdesDoktorCaligariTheCabinetofDrCaligari",
+   "vod_play_from": "default",
+   "vod_play_url": "第1集$https://archive.org/download/DasKabinettdesDoktorCaligariTheCabinetofDrCaligari/The_Cabinet_of_Dr._Caligari.ogv",
+   "vod_content": "The Cabinet of Dr. Caligari is the first modern Horror Film and it influence a number of contemporary productions. A real classic!   PLOT: A man named Francis relates a story about his best friend Alan and his fiancée Jane. Alan takes him to a fair where they meet Dr. Caligari, who exhibits a somnam"
+  }
+ ]
+}

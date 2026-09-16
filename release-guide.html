@@ -1,0 +1,463 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>发布指引 · Ouonnki 影视客户端</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1815'/%3E%3Cpath d='M12 9.5l11 6.5-11 6.5z' fill='%23c9402f'/%3E%3C/svg%3E"
+    />
+    <style>
+      :root {
+        --paper: oklch(97.4% 0.007 88);
+        --paper-2: oklch(99.2% 0.004 88);
+        --paper-3: oklch(95.6% 0.01 88);
+        --ink: oklch(21% 0.018 65);
+        --ink-2: oklch(38% 0.015 70);
+        --ink-3: oklch(56% 0.012 75);
+        --hair: oklch(87% 0.012 80);
+        --hair-2: oklch(79% 0.014 80);
+        --accent: oklch(53% 0.185 30);
+        --accent-soft: oklch(94.5% 0.03 32);
+        --ok: oklch(50% 0.1 152);
+        --font-display: "PingFang SC", "HarmonyOS Sans SC", "Microsoft YaHei",
+          system-ui, sans-serif;
+        --font-mono: ui-monospace, "Cascadia Mono", Consolas, monospace;
+        --pad: clamp(1.1rem, 4vw, 3rem);
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--paper);
+        color: var(--ink);
+        font-family: "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+        line-height: 1.7;
+      }
+      a {
+        color: var(--accent);
+      }
+      .wrap {
+        max-width: 900px;
+        margin-inline: auto;
+        padding-inline: var(--pad);
+      }
+      header.nav {
+        background: oklch(17% 0.018 60);
+        color: #fff;
+      }
+      .nav-inner {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        min-height: 58px;
+      }
+      .brand {
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        color: #fff;
+        text-decoration: none;
+      }
+      .nav-inner nav {
+        margin-left: auto;
+        display: flex;
+        gap: 1.1rem;
+        font-size: 0.85rem;
+      }
+      .nav-inner nav a {
+        color: oklch(76% 0.015 82);
+        text-decoration: none;
+      }
+      .nav-inner nav a:hover {
+        color: #fff;
+      }
+      h1 {
+        font-family: var(--font-display);
+        font-size: clamp(1.6rem, 4vw, 2.3rem);
+        letter-spacing: -0.03em;
+        font-weight: 800;
+        margin: 2rem 0 0.6rem;
+      }
+      h2 {
+        font-family: var(--font-display);
+        font-size: 1.2rem;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        margin: 2.5rem 0 0.9rem;
+        padding-top: 1.2rem;
+        border-top: 1px solid var(--hair);
+      }
+      p {
+        margin: 0 0 0.9rem;
+        color: var(--ink-2);
+        font-size: 0.92rem;
+      }
+      .lede {
+        font-size: 1rem;
+        color: var(--ink-2);
+        margin-bottom: 1.5rem;
+      }
+      ol.steps {
+        counter-reset: s;
+        list-style: none;
+        padding: 0;
+        margin: 1rem 0 0;
+      }
+      ol.steps > li {
+        counter-increment: s;
+        position: relative;
+        padding-left: 2.6rem;
+        margin-bottom: 1.5rem;
+      }
+      ol.steps > li::before {
+        content: counter(s);
+        position: absolute;
+        left: 0;
+        top: 0.1rem;
+        width: 1.75rem;
+        height: 1.75rem;
+        border-radius: 50%;
+        background: var(--accent-soft);
+        color: var(--accent);
+        font-family: var(--font-mono);
+        font-size: 0.8rem;
+        display: grid;
+        place-items: center;
+      }
+      .shot {
+        border: 1px solid var(--hair);
+        border-radius: 6px;
+        background: var(--paper-2);
+        padding: 0.9rem 1rem;
+        margin-top: 0.7rem;
+        font-size: 0.85rem;
+      }
+      .shot .bar {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding-bottom: 0.6rem;
+        border-bottom: 1px solid var(--hair);
+        margin-bottom: 0.7rem;
+        font-family: var(--font-mono);
+        font-size: 0.68rem;
+        color: var(--ink-3);
+      }
+      .shot .dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--hair-2);
+      }
+      .shot .row {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        padding: 0.45rem 0.6rem;
+        border-radius: 4px;
+        color: var(--ink-2);
+      }
+      .shot .row.hl {
+        background: var(--accent-soft);
+        color: var(--ink);
+        font-weight: 600;
+        box-shadow: inset 0 0 0 1px oklch(84% 0.06 30);
+      }
+      .shot .kbd {
+        margin-left: auto;
+        font-family: var(--font-mono);
+        font-size: 0.72rem;
+        border: 1px solid var(--hair-2);
+        border-radius: 3px;
+        padding: 0.1rem 0.4rem;
+        background: var(--paper-2);
+      }
+      .tip {
+        border-left: 3px solid var(--accent);
+        background: var(--accent-soft);
+        padding: 0.75rem 1rem;
+        border-radius: 0 5px 5px 0;
+        font-size: 0.85rem;
+        color: var(--ink-2);
+        margin: 0.9rem 0;
+      }
+      .warn {
+        border-left: 3px solid oklch(70% 0.15 60);
+        background: oklch(96% 0.03 70);
+        padding: 0.75rem 1rem;
+        border-radius: 0 5px 5px 0;
+        font-size: 0.85rem;
+        color: var(--ink-2);
+        margin: 0.9rem 0;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.84rem;
+        margin-top: 0.8rem;
+      }
+      th,
+      td {
+        text-align: left;
+        padding: 0.55rem 0.6rem;
+        border-bottom: 1px solid var(--hair);
+        vertical-align: top;
+      }
+      th {
+        font-size: 0.78rem;
+        color: var(--ink-3);
+        font-weight: 600;
+      }
+      code {
+        font-family: var(--font-mono);
+        font-size: 0.76rem;
+        background: var(--paper-3);
+        border: 1px solid var(--hair);
+        border-radius: 3px;
+        padding: 0.08rem 0.32rem;
+        word-break: break-all;
+      }
+      pre {
+        background: var(--paper-3);
+        border: 1px solid var(--hair);
+        border-radius: 5px;
+        padding: 0.8rem 0.9rem;
+        overflow-x: auto;
+        font-family: var(--font-mono);
+        font-size: 0.76rem;
+        line-height: 1.7;
+        color: var(--ink-2);
+      }
+      footer {
+        margin-top: 3rem;
+        border-top: 1px solid var(--hair);
+        padding-block: 1.75rem 2.5rem;
+        font-size: 0.8rem;
+        color: var(--ink-3);
+      }
+    </style>
+  </head>
+  <body>
+    <header class="nav">
+      <div class="wrap nav-inner">
+        <a class="brand" href="./index.html">Ouonnki 影视</a>
+        <nav>
+          <a href="./index.html">片库</a>
+          <a href="./index.html#clients">三端下载</a>
+          <a href="./tools.html">工具箱</a>
+        </nav>
+      </div>
+    </header>
+
+    <div class="wrap">
+      <h1>客户端发布与安装指引</h1>
+      <p class="lede">
+        三个安装包已经构建完成，站点的下载按钮现在指向本站直链，点开就能下。
+        如果你想把它们正式发布到 GitHub Releases（拿到带版本号的永久地址），按下面走一遍即可。
+      </p>
+
+      <h2>已经打好的包</h2>
+      <table>
+        <tr>
+          <th>文件</th>
+          <th>大小</th>
+          <th>SHA256</th>
+        </tr>
+        <tr>
+          <td><code>OuonnkiTV-TV-arm64-v2.0.0.apk</code></td>
+          <td>16.9 KB</td>
+          <td><code>955b39f8b8a7646f73d94f7f7bdf565a467661d7c01f328437f3b1de591c97e4</code></td>
+        </tr>
+        <tr>
+          <td><code>OuonnkiTV-Android-v2.0.0.apk</code></td>
+          <td>16.8 KB</td>
+          <td><code>c1c34a78c747ed1530ec6713ef6296df662d8e0a4702f64f6a922be34236a948</code></td>
+        </tr>
+        <tr>
+          <td><code>OuonnkiTV-2.0.0-win-x64-portable.zip</code></td>
+          <td>121 MB</td>
+          <td><code>49fbb91879b32caf7921929bcaddf161899eb1511be6e0dc89fe4d4234e9d9b3</code></td>
+        </tr>
+      </table>
+      <p style="margin-top: 0.8rem">
+        三个包都只是「壳」：打开后加载你自己的 OuonnkiTV 实例地址，不内置任何片源。
+        首次启动可在菜单里改地址（Android 按菜单键 / Windows 帮助菜单 → 打开配置文件夹）。
+      </p>
+
+      <h2>一、发布到 GitHub Releases</h2>
+      <ol class="steps">
+        <li>
+          <strong>打开仓库的 Releases 页面</strong><br />
+          进入
+          <a href="https://github.com/1333555777/OuonnkiTV/releases" target="_blank" rel="noopener">github.com/1333555777/OuonnkiTV/releases</a
+          >，点右上角绿色按钮。
+          <div class="shot">
+            <div class="bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span> github.com/1333555777/OuonnkiTV/releases</div>
+            <div class="row">Code &nbsp;Issues &nbsp;Pull requests &nbsp;Actions &nbsp;Projects &nbsp;Wiki</div>
+            <div class="row hl">
+              Releases&nbsp; 0 &nbsp;&nbsp;→ 点击 <span class="kbd">Create a new release</span>
+            </div>
+          </div>
+        </li>
+        <li>
+          <strong>填标签与标题</strong><br />
+          Choose a tag 填 <code>v2.0.0</code>（页面里的下载链接就是按这个版本号拼的，<b>一定要一致</b>），
+          Release title 建议写 <code>OuonnkiTV v2.0.0</code>。
+          <div class="warn">
+            最常填错的地方：tag 必须是 <code>v2.0.0</code>（带 v 开头）。写成 <code>2.0.0</code> 会让
+            <code>releases/latest/download/…</code> 这类链接全部 404。
+          </div>
+        </li>
+        <li>
+          <strong>拖入三个安装包</strong><br />
+          把下面三个文件拖到 “Attach binaries by dropping them here or selecting them” 区域，
+          <b>文件名不要改</b>：
+          <pre>
+OuonnkiTV-TV-arm64-v2.0.0.apk
+OuonnkiTV-Android-v2.0.0.apk
+OuonnkiTV-2.0.0-win-x64-portable.zip</pre
+          >
+          <div class="tip">
+            Windows 那个包 121 MB，GitHub 单个文件上限 2 GB，没问题；但上传时间取决于你的网络，别中途关页面。
+          </div>
+        </li>
+        <li>
+          <strong>发布</strong><br />
+          点 <code>Publish release</code>。发布后这些地址就生效了：
+          <pre>
+https://github.com/1333555777/OuonnkiTV/releases/latest/download/OuonnkiTV-TV-arm64-v2.0.0.apk
+https://github.com/1333555777/OuonnkiTV/releases/latest/download/OuonnkiTV-Android-v2.0.0.apk
+https://github.com/1333555777/OuonnkiTV/releases/latest/download/OuonnkiTV-2.0.0-win-x64-portable.zip</pre
+          >
+        </li>
+        <li>
+          <strong>（可选）把站点链接切回 Releases</strong><br />
+          站点现在用的是本地直链，永远可用。如果想让主按钮走 GitHub，把
+          <code>index.html</code> 里的 <code>LOCAL_DL</code> 换成
+          <code>RELEASE_BASE + "/"</code> 即可。
+        </li>
+      </ol>
+
+      <h2 id="android">二、Android 安装（电视 / 手机）</h2>
+      <ol class="steps">
+        <li>把 APK 传到设备（U 盘、微信文件传输、或用电视上的浏览器直接打开下载页）。</li>
+        <li>
+          点击安装，系统会提示「未知来源应用」→ 允许。部分电视需要在
+          <b>设置 → 设备偏好设置 → 安全和限制 → 未知来源</b> 里先给文件管理器授权。
+        </li>
+        <li>
+          装好后打开，默认加载站点首页。想换成自己的实例：
+          <b>按遥控器菜单键 / 手机右上角菜单 → 设置首页地址</b>，填入后保存。
+        </li>
+      </ol>
+      <div class="tip">
+        电视端包名 <code>com.ouonnki.tv</code>，手机端 <code>com.ouonnki.tv.mobile</code>，
+        两个可以同时装在一台设备上，互不影响。
+      </div>
+
+      <h2 id="win">三、Windows 安装</h2>
+      <ol class="steps">
+        <li>下载 <code>OuonnkiTV-2.0.0-win-x64-portable.zip</code>，解压到任意文件夹（建议不要放 C 盘根目录）。</li>
+        <li>双击 <code>OuonnkiTV.exe</code> 即可运行，无需安装。</li>
+        <li>若弹出 Windows SmartScreen 蓝色提示，点 <b>更多信息 → 仍要运行</b>。</li>
+        <li>换地址：帮助 → 打开配置文件夹 → 编辑 <code>config.json</code> 里的 <code>homeUrl</code>，重启生效。</li>
+      </ol>
+
+      <h2 id="mac">四、macOS 安装（装成独立 App）</h2>
+      <ol class="steps">
+        <li>用 <b>Chrome 或 Edge</b> 打开站点，点地址栏右侧的「安装」图标（或菜单 → 投放、保存和共享 → 安装此站点为应用）。</li>
+        <li>或用 Safari 打开 → 分享 → 添加到程序坞，同样得到独立窗口的 App。</li>
+        <li>之后从 Launchpad / 程序坞打开，就是一个独立窗口的客户端，不显示浏览器标签页。</li>
+      </ol>
+
+      <h2 id="ios">五、iOS / iPadOS 安装（添加到主屏）</h2>
+      <ol class="steps">
+        <li>用 <b>Safari</b> 打开站点（必须是 Safari，Chrome 不支持添加主屏）。</li>
+        <li>点底部「分享」按钮 → 往下滑，选 <b>添加到主屏幕</b>。</li>
+        <li>确认名称后点「添加」，桌面就出现图标，打开即全屏运行，和原生 App 无异。</li>
+      </ol>
+
+      <h2>六、手动上传到 Cloudflare Pages</h2>
+      <p>
+        可以手动传，不用连 Git。但 Cloudflare Pages 有两条硬限制，超限的文件会被标红并拒绝上传：
+      </p>
+      <table>
+        <tr>
+          <th>限制项</th>
+          <th>拖拽上传（后台）</th>
+          <th>Wrangler CLI</th>
+        </tr>
+        <tr>
+          <td>单文件大小</td>
+          <td colspan="2"><b>25 MiB</b>（两种都一样）</td>
+        </tr>
+        <tr>
+          <td>文件数量</td>
+          <td>1,000 个</td>
+          <td>20,000 个</td>
+        </tr>
+      </table>
+      <div class="warn">
+        我们目录里有 <b>两个文件超限</b>：<code>ffmpeg-core.wasm</code>（30.6 MB）和
+        <code>OuonnkiTV-2.0.0-win-x64-portable.zip</code>（121 MB）。
+        直接拖整个文件夹，这两个会上传失败。
+      </div>
+      <ol class="steps">
+        <li>
+          <strong>用已经准备好的精简目录</strong><br />
+          打开 <code>site-cloudflare</code> 文件夹（已自动排除上面两个大文件，只剩 11 个文件、0.3 MB），
+          直接拖进去就能一次成功。
+        </li>
+        <li>
+          <strong>在后台操作</strong><br />
+          Cloudflare 后台 → <b>Workers &amp; Pages → Create → Pages → Upload assets</b>
+          → 填项目名 → 把文件夹拖进虚线框 → <b>Save and Deploy</b>。
+          <div class="shot">
+            <div class="bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span> Workers &amp; Pages → Pages</div>
+            <div class="row">Create a project</div>
+            <div class="row hl">
+              <span>□ Upload assets</span><span class="kbd">拖拽 site-cloudflare 文件夹</span>
+            </div>
+            <div class="row">Save and Deploy → 得到 https://项目名.pages.dev</div>
+          </div>
+        </li>
+        <li>
+          <strong>大文件走 R2 或 Releases</strong><br />
+          Windows 包 121 MB 建议传到 GitHub Releases（第一篇教程就是这个流程）。
+          页面上的下载按钮做了自动判断：<b>本站有这个文件就用本站，没有就自动跳 Releases</b>，
+          所以精简目录传上去之后按钮不会变死链。
+        </li>
+        <li>
+          <strong>（可选）工具箱的引擎也搬进 R2</strong><br />
+          默认会去 unpkg 取 <code>ffmpeg-core.wasm</code>。想加速就在 R2 建公共桶，
+          把 <code>ffmpeg-core.js</code> 和 <code>ffmpeg-core.wasm</code> 传上去，
+          然后在 <code>tools.html</code> 里加一行：
+          <pre>&lt;script&gt;window.OKI_CORE_CDN = "https://你的R2域名/path/";&lt;/script&gt;</pre>
+        </li>
+      </ol>
+      <div class="tip">
+        拖拽上传每次都是全量替换，改一个文件也得整个重传（0.3 MB 的话无所谓）。
+        如果以后想只传改动，改用 <code>npx wrangler pages deploy site-cloudflare</code>。
+      </div>
+
+      <h2>常见问题</h2>
+      <p>
+        <b>为什么包这么小？</b>它们只是 WebView / Electron 壳，界面和内容都由你的实例提供，
+        所以只有十几 KB（Windows 版因为内置 Chromium 运行时才有 121 MB）。
+      </p>
+      <p>
+        <b>能改默认地址吗？</b>能。Android 菜单键 → 设置首页地址；Windows 帮助 → 打开配置文件夹改
+        <code>config.json</code>；也可以直接改源码里的 <code>HOME_URL</code> 重新打包。
+      </p>
+      <p>
+        <b>播放没声音 / 打不开？</b>确认实例地址能正常访问，且是 https（或已在壳里放行 http）。
+      </p>
+    </div>
+
+    <footer>
+      <div class="wrap">OuonnkiTV · Apache License 2.0 · 客户端仅为浏览器壳，不托管任何内容</div>
+    </footer>
+  </body>
+</html>
