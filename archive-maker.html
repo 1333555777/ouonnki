@@ -446,7 +446,7 @@ python build/build_archive_source.py --no-verify            # 跳过实测，速
       var st = $("#st");
       var bar = $("#bar");
       var BLOCK = ["sex", "sexy", "nudist", "nudity", "nude", "naked", "erotic", "erotica", "adult", "porn", "xxx", "fetish", "orgy", "strip"];
-      var VIDEO_EXT = [".mp4", ".m4v", ".ogv", ".webm"];
+      var VIDEO_EXT = [".mp4", ".m4v", ".webm"]; // 不收 .ogv：新版 Edge/Chrome 已不支持 Theora 视频解码（有声无图）
       var VIDEO_FMT = ["MPEG4", "h.264", "H.264", "Ogg Video", "WebM", "h.264 IA"];
       var MAX = 3 * 1024 * 1024 * 1024;
       var result = [];
