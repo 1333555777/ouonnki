@@ -469,17 +469,6 @@
    "vod_content": "In celebration of International Observe the Moon Night 2021, NASA’s Lunar Reconnaissance Orbiter mission created this music video featuring the song \"A Million Dreams,\" performed by the musical artist P!NK and the Ndlovu Youth Choir from South Africa. On this day, we recognize all of the beautiful aspects of observing the Moon, from the scientific to the inspirational. This video has been edited for time for the NASA VOYA contest. To see the original, visit the Goddard YouTube page at: https://w"
   },
   {
-   "vod_id": "NHQ_2019_1219_How We Are Going to the Moon - 4K",
-   "vod_name": "How We Are Going to the Moon - 4K",
-   "type_name": "NASA 影像",
-   "vod_year": "2019",
-   "vod_remarks": "美国联邦政府作品 · 公有领域",
-   "vod_pic": "https://images-assets.nasa.gov/video/NHQ_2019_1219_How%20We%20Are%20Going%20to%20the%20Moon%20-%204K/NHQ_2019_1219_How%20We%20Are%20Going%20to%20the%20Moon%20-%204K~small_1.jpg",
-   "vod_play_from": "NASA官方",
-   "vod_play_url": "正片$https://images-assets.nasa.gov/video/NHQ_2019_1219_How%20We%20Are%20Going%20to%20the%20Moon%20-%204K/NHQ_2019_1219_How%20We%20Are%20Going%20to%20the%20Moon%20-%204K~medium.mp4",
-   "vod_content": "While Apollo placed the first steps on the Moon, Artemis opens the door for humanity to sustainably work and live on another world for the first time. Using the lunar surface as a proving ground for living on Mars, this next chapter in exploration will forever establish our presence in the stars. ✨ We are returning to the Moon – to stay – and this is how we are going! Actress Kelly Marie Tran of “Star Wars: The Rise of Skywalker” lent her voice to this project."
-  },
-  {
    "vod_id": "How Will We Extract Water on the Moon",
    "vod_name": "How Will We Extract Water on the Moon",
    "type_name": "NASA 影像",
@@ -489,6 +478,17 @@
    "vod_play_from": "NASA官方",
    "vod_play_url": "正片$https://images-assets.nasa.gov/video/How%20Will%20We%20Extract%20Water%20on%20the%20Moon/How%20Will%20We%20Extract%20Water%20on%20the%20Moon~large.mp4",
    "vod_content": "We know the Moon contains water, but, could future astronauts access and make use of it? That’s the goal. At NASA, we’re actively trying to answer that question. Once it lands at the lunar south pole, our PRIME-1 — Polar Resources Ice Mining Experiment-1 – will robotically sample and analyze ice from beneath the lunar surface, contributing to our search for water on the Moon: https://go.nasa.gov/2QygCmF Producers: Jessica Wilde, Scott Bednar Editor: James Lucas"
+  },
+  {
+   "vod_id": "NHQ_2019_1219_How We Are Going to the Moon - 4K",
+   "vod_name": "How We Are Going to the Moon - 4K",
+   "type_name": "NASA 影像",
+   "vod_year": "2019",
+   "vod_remarks": "美国联邦政府作品 · 公有领域",
+   "vod_pic": "https://images-assets.nasa.gov/video/NHQ_2019_1219_How%20We%20Are%20Going%20to%20the%20Moon%20-%204K/NHQ_2019_1219_How%20We%20Are%20Going%20to%20the%20Moon%20-%204K~small_1.jpg",
+   "vod_play_from": "NASA官方",
+   "vod_play_url": "正片$https://images-assets.nasa.gov/video/NHQ_2019_1219_How%20We%20Are%20Going%20to%20the%20Moon%20-%204K/NHQ_2019_1219_How%20We%20Are%20Going%20to%20the%20Moon%20-%204K~medium.mp4",
+   "vod_content": "While Apollo placed the first steps on the Moon, Artemis opens the door for humanity to sustainably work and live on another world for the first time. Using the lunar surface as a proving ground for living on Mars, this next chapter in exploration will forever establish our presence in the stars. ✨ We are returning to the Moon – to stay – and this is how we are going! Actress Kelly Marie Tran of “Star Wars: The Rise of Skywalker” lent her voice to this project."
   },
   {
    "vod_id": "NHQ_2020_0430_NASA Administrator Announces Commerical Human Lander Awards for Artemis Moon Missons",
