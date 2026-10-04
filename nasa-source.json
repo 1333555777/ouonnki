@@ -546,17 +546,6 @@
    "vod_content": "art001m1013321410 (Nov. 28): On flight day 13, Orion continues to distance itself from Earth and the Moon, looking back on our home planet and lunar neighbor as the Moon prepares to eclipse the Earth as seen from Orion."
   },
   {
-   "vod_id": "NHQ_2019_1007_AskNASA EP105 Lindsay Aitchison",
-   "vod_name": "#AskNASA - How Are We Going To The Moon?",
-   "type_name": "NASA 影像",
-   "vod_year": "2019",
-   "vod_remarks": "美国联邦政府作品 · 公有领域",
-   "vod_pic": "https://images-assets.nasa.gov/video/NHQ_2019_1007_AskNASA%20EP105%20Lindsay%20Aitchison/NHQ_2019_1007_AskNASA%20EP105%20Lindsay%20Aitchison~medium_1.jpg",
-   "vod_play_from": "NASA官方",
-   "vod_play_url": "正片$https://images-assets.nasa.gov/video/NHQ_2019_1007_AskNASA%20EP105%20Lindsay%20Aitchison/NHQ_2019_1007_AskNASA%20EP105%20Lindsay%20Aitchison~large.mp4",
-   "vod_content": "NASA Spacesuit Engineer Lindsay Aitchison answers the question “How are we going to the Moon?” Comment on this video using #AskNASA with your questions for upcoming episodes! She addresses key questions about our plans to explore the Moon and Mars in the Artemis Program. Lindsay also highlights how the Gateway will help in our missions to Mars."
-  },
-  {
    "vod_id": "GSFC_20110617_LRO_m10794_Eclipse_closeup",
    "vod_name": "LRO's Diviner Takes the Moon's Temperature During Eclipse: Eclipse Closeup",
    "type_name": "NASA 影像",
@@ -566,6 +555,17 @@
    "vod_play_from": "NASA官方",
    "vod_play_url": "正片$https://images-assets.nasa.gov/video/GSFC_20110617_LRO_m10794_Eclipse_closeup/GSFC_20110617_LRO_m10794_Eclipse_closeup~large.mp4",
    "vod_content": "During the June 2011 lunar eclipse, scientists will be able to get a unique view of the moon. While the sun is blocked by the Earth, LRO's Diviner instrument will take the temperature on the lunar surface. Since different rock sizes cool at different rates, scientists will be able to infer the size and density of rocks on the moon."
+  },
+  {
+   "vod_id": "NHQ_2019_1007_AskNASA EP105 Lindsay Aitchison",
+   "vod_name": "#AskNASA - How Are We Going To The Moon?",
+   "type_name": "NASA 影像",
+   "vod_year": "2019",
+   "vod_remarks": "美国联邦政府作品 · 公有领域",
+   "vod_pic": "https://images-assets.nasa.gov/video/NHQ_2019_1007_AskNASA%20EP105%20Lindsay%20Aitchison/NHQ_2019_1007_AskNASA%20EP105%20Lindsay%20Aitchison~medium_1.jpg",
+   "vod_play_from": "NASA官方",
+   "vod_play_url": "正片$https://images-assets.nasa.gov/video/NHQ_2019_1007_AskNASA%20EP105%20Lindsay%20Aitchison/NHQ_2019_1007_AskNASA%20EP105%20Lindsay%20Aitchison~large.mp4",
+   "vod_content": "NASA Spacesuit Engineer Lindsay Aitchison answers the question “How are we going to the Moon?” Comment on this video using #AskNASA with your questions for upcoming episodes! She addresses key questions about our plans to explore the Moon and Mars in the Artemis Program. Lindsay also highlights how the Gateway will help in our missions to Mars."
   },
   {
    "vod_id": "ARC-20221004-AAV3443-MoonOrigin-Social-NASAWeb-1080p",
