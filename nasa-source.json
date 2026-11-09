@@ -128,17 +128,6 @@
    "vod_content": "NASA Chief Scientist Jim Green answers the question “Why are we going to the Moon?” Comment on this video using #AskNASA with your questions for upcoming episodes! He addresses key questions about our plans to explore the Moon and Mars, including where we will most likely find water on the Moon. Jim shares his extensive background in Planetary Science to explain the significance of returning with international and commercial partners. Jim also highlights how we are currently exploring Mars with "
   },
   {
-   "vod_id": "Where Are the Moon Rocks_ - Horizontal Video",
-   "vod_name": "Where Are the Moon Rocks? We Asked A NASA Expert",
-   "type_name": "NASA 影像",
-   "vod_year": "2023",
-   "vod_remarks": "美国联邦政府作品 · 公有领域",
-   "vod_pic": "https://images-assets.nasa.gov/video/Where%20Are%20the%20Moon%20Rocks_%20-%20Horizontal%20Video/Where%20Are%20the%20Moon%20Rocks_%20-%20Horizontal%20Video~small_1.jpg",
-   "vod_play_from": "NASA官方",
-   "vod_play_url": "正片$https://images-assets.nasa.gov/video/Where%20Are%20the%20Moon%20Rocks_%20-%20Horizontal%20Video/Where%20Are%20the%20Moon%20Rocks_%20-%20Horizontal%20Video~large.mp4",
-   "vod_content": "Where are the Moon rocks? When they’re not being studied by institutions or enjoyed by museumgoers, NASA has a specialized Lunar Sample Curation Laboratory at NASA’s Johnson Space Center to store and keep these otherworldly samples safe. Deputy Apollo Sample Curator Dr. Juliane Gross explains more about lunar sample curation."
-  },
-  {
    "vod_id": "Raising_The_American_Flag_Comparison_720p",
    "vod_name": "Raising_The_American_Flag_Comparison_720p",
    "type_name": "NASA 影像",
@@ -148,6 +137,17 @@
    "vod_play_from": "NASA官方",
    "vod_play_url": "正片$https://images-assets.nasa.gov/video/Raising_The_American_Flag_Comparison_720p/Raising_The_American_Flag_Comparison_720p~medium.mp4",
    "vod_content": "Neil Armstrong and Buzz Aldrin raise the American flag on the moon. The video compares existing footage with the partially restored video. The thumbnail image shows the new footage on the left and the old on the right."
+  },
+  {
+   "vod_id": "Where Are the Moon Rocks_ - Horizontal Video",
+   "vod_name": "Where Are the Moon Rocks? We Asked A NASA Expert",
+   "type_name": "NASA 影像",
+   "vod_year": "2023",
+   "vod_remarks": "美国联邦政府作品 · 公有领域",
+   "vod_pic": "https://images-assets.nasa.gov/video/Where%20Are%20the%20Moon%20Rocks_%20-%20Horizontal%20Video/Where%20Are%20the%20Moon%20Rocks_%20-%20Horizontal%20Video~small_1.jpg",
+   "vod_play_from": "NASA官方",
+   "vod_play_url": "正片$https://images-assets.nasa.gov/video/Where%20Are%20the%20Moon%20Rocks_%20-%20Horizontal%20Video/Where%20Are%20the%20Moon%20Rocks_%20-%20Horizontal%20Video~large.mp4",
+   "vod_content": "Where are the Moon rocks? When they’re not being studied by institutions or enjoyed by museumgoers, NASA has a specialized Lunar Sample Curation Laboratory at NASA’s Johnson Space Center to store and keep these otherworldly samples safe. Deputy Apollo Sample Curator Dr. Juliane Gross explains more about lunar sample curation."
   },
   {
    "vod_id": "KSC-20260303-MH-JBS01-0001-Full_Moon_and Sunrise_at_KSC-M19750",
